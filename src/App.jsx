@@ -533,7 +533,7 @@ function Menu() {
       {/* Header */}
       <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-md p-4 flex justify-between items-center px-6 md:px-20 border-b border-gray-800">
         <button onClick={() => navigate("/")} className="border border-[#D4A373] px-4 py-2 text-[#D4A373] hover:bg-[#D4A373] hover:text-black transition rounded-lg text-sm">← HOME</button>
-        <h1 className="text-2xl font-bold tracking-wide">PREMIUM <span className="text-[#D4A373]">MENU</span></h1>
+        <h1 className="text-2xl font-bold tracking-wide"><span className="text-[#D4A373]">MENU</span></h1>
         <div className="w-20"></div>
       </div>
 
@@ -603,28 +603,6 @@ function Menu() {
             <p className="text-gray-400">No items found in this category.</p>
           </div>
         )}
-
-        {/* House Special Banner */}
-        <div className="mt-20 text-center p-10 bg-gradient-to-r from-[#111] to-[#1a1a1a] rounded-2xl border border-[#D4A373]/20">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-left">
-              <span className="text-[#D4A373] text-sm uppercase tracking-wider">House Special</span>
-              <h2 className="text-3xl font-bold mt-2 mb-3">🏆 Classic Sulaimani</h2>
-              <p className="text-gray-400 max-w-md">Slow brewed for 4 hours with secret family spices. Kerala's most loved tea.</p>
-            </div>
-            <div className="text-center">
-              <span className="text-4xl font-bold text-[#D4A373]">₹59</span>
-              <p className="text-gray-500 text-sm mt-1">per cup</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Seasonal Offer */}
-        <div className="mt-12 p-8 bg-[#D4A373]/10 rounded-2xl border border-[#D4A373]/30 text-center">
-          <h3 className="text-2xl font-bold mb-2">🍂 Seasonal Special</h3>
-          <p className="text-gray-300">Try our limited edition Cinnamon Spiced Chai - available only this winter!</p>
-          <p className="text-[#D4A373] font-bold mt-3">₹99 per cup</p>
-        </div>
       </div>
     </div>
   )
