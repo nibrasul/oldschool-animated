@@ -118,14 +118,14 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,194,128,0.06)_0%,rgba(0,0,0,0.85)_80%)] z-10 pointer-events-none" />
 
         {/* Content Wrapper aligned to bottom-left */}
-        <div className="absolute bottom-24 left-6 md:left-20 max-w-4xl text-left z-20">
+        <div className="absolute bottom-12 md:bottom-24 left-6 md:left-20 max-w-4xl text-left z-20">
 
           {/* Phase 0: Main Hero Title (Invisible on load, reveals and triggers text animations on scroll start, remains till the last frame) */}
-          <div style={getOverlayStyle([0.02, 1.0], scrollPercent, true, true)} className="space-y-6">
-            <p className="text-[#E6C280] text-[0.7rem] md:text-[0.8rem] font-medium tracking-[0.4em] uppercase animate-pulse">
+          <div style={getOverlayStyle([0.02, 1.0], scrollPercent, true, true)} className="space-y-4 md:space-y-6">
+            <p className="text-[#E6C280] text-[0.65rem] md:text-[0.8rem] font-medium tracking-[0.4em] uppercase animate-pulse">
               🍵 Crafted with Tradition & Nostalgia
             </p>
-            <h1 className="text-4xl md:text-8xl lg:text-[7.9rem] font-bold text-white leading-[1.08] tracking-tight">
+            <h1 className="text-[11vw] sm:text-[9vw] md:text-8xl lg:text-[7.5rem] font-bold text-white leading-[1.08] tracking-tight">
               <span className="block overflow-hidden relative h-[1.18em] py-1">
                 <span className="block reveal-text-1 whitespace-nowrap">
                   OLD SCHOOL
@@ -137,13 +137,13 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
                 </span>
               </span>
             </h1>
-            <p className="text-sm md:text-lg text-gray-300 max-w-xl font-light leading-relaxed tracking-wide opacity-0 reveal-fade-1">
+            <p className="text-xs sm:text-sm md:text-lg text-gray-300 max-w-xl font-light leading-relaxed tracking-wide opacity-0 reveal-fade-1">
               Where pure tea leaves from the misty Western Ghats meet authentic wood-fired clay brewing. Every cup is a sip of soulful memory.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-start items-start pt-4 opacity-0 reveal-fade-2">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start items-start pt-2 md:pt-4 opacity-0 reveal-fade-2">
               <button
                 onClick={onExploreClick}
-                className="w-full sm:w-auto luxury-btn luxury-btn-solid px-8 py-3.5 flex items-center justify-center gap-2 group font-semibold text-xs rounded-sm"
+                className="w-full sm:w-auto luxury-btn luxury-btn-solid px-6 py-3 md:px-8 md:py-3.5 flex items-center justify-center gap-2 group font-semibold text-xs rounded-sm"
               >
                 Explore The Ritual
                 <Compass className="w-4 h-4 group-hover:rotate-45 transition duration-500" />
