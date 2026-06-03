@@ -22,6 +22,7 @@ import {
   Layers,
   ChevronRight,
 } from "lucide-react";
+import { Analytics } from "@vercel/analytics/react";
 
 // Local Instagram SVG Icon
 const Instagram = (props) => (
@@ -1268,6 +1269,7 @@ export default function App() {
         <Route path="/locations" element={<LocationsPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }
