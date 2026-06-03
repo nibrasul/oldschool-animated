@@ -176,7 +176,7 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
           {isLoaded && (
             <div style={getOverlayStyle([0.02, 1.0], scrollPercent, true, true)} className="space-y-4 md:space-y-6">
               <p className="text-[#E6C280] text-[0.65rem] md:text-[0.8rem] font-medium tracking-[0.4em] uppercase animate-pulse">
-                🍵 Crafted with Tradition & Nostalgia
+                🫖 Crafted with Tradition & Nostalgia
               </p>
               <h1 className="text-[11vw] sm:text-[9vw] md:text-8xl lg:text-[7.5rem] font-bold text-white leading-[1.08] tracking-tight">
                 <span className="block overflow-hidden relative h-[1.18em] py-1">
@@ -250,7 +250,7 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
             <div className="absolute inset-0 border border-[#E6C280]/20 rounded-full animate-[spin_10s_linear_infinite]" />
             <div className="absolute inset-2 border border-[#E6C280]/40 border-t-transparent rounded-full animate-[spin_4s_linear_infinite]" />
             <div className="absolute inset-4 bg-[#E6C280]/5 rounded-full flex items-center justify-center">
-              <span className="text-3xl animate-pulse">🍵</span>
+              <span className="text-3xl animate-pulse">🫖</span>
             </div>
           </div>
 
