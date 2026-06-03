@@ -7,23 +7,75 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
   const [activeFrame, setActiveFrame] = useState(1);
 
   const totalFrames = 156;
-  const step = 3; // Downsample: load every 3rd frame (72 frames total) for optimal performance
+  const step = 3; // Downsample: load every 3rd frame (52 frames total) for optimal performance
+
+  // Generate exact frames list to load
+  const framesToLoad = [];
+  for (let i = 1; i <= totalFrames; i += step) {
+    framesToLoad.push(i);
+  }
+  if (!framesToLoad.includes(totalFrames)) {
+    framesToLoad.push(totalFrames);
+  }
+
+  const [loadedCount, setLoadedCount] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const progressPercent = Math.min(
+    100,
+    Math.round((loadedCount / (framesToLoad.length || 1)) * 100)
+  );
 
   const getFrameFilename = (index) => {
     const padded = String(index).padStart(3, "0");
     return `/images/herosection/ezgif-frame-${padded}.png`;
   };
 
-  // 1. Preload image sequence on mount to warm browser cache
+  // 1. Preload image sequence on mount to warm browser cache and track progress
   useEffect(() => {
-    for (let i = 1; i <= totalFrames; i += step) {
+    let loaded = 0;
+    const targetCount = framesToLoad.length;
+
+    const handleImageLoad = () => {
+      loaded += 1;
+      setLoadedCount(loaded);
+      if (loaded >= targetCount) {
+        // Add a slight delay for smooth visual transition
+        setTimeout(() => {
+          setIsLoaded(true);
+        }, 600);
+      }
+    };
+
+    const handleImageError = () => {
+      loaded += 1;
+      setLoadedCount(loaded);
+      if (loaded >= targetCount) {
+        setTimeout(() => {
+          setIsLoaded(true);
+        }, 600);
+      }
+    };
+
+    framesToLoad.forEach((frame) => {
       const img = new Image();
-      img.src = getFrameFilename(i);
-    }
-    // Ensure final frame is preloaded
-    const lastImg = new Image();
-    lastImg.src = getFrameFilename(totalFrames);
+      img.onload = handleImageLoad;
+      img.onerror = handleImageError;
+      img.src = getFrameFilename(frame);
+    });
   }, []);
+
+  // 1b. Prevent scrolling while loading
+  useEffect(() => {
+    if (!isLoaded) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isLoaded]);
 
   // 2. Scroll and Resize listener
   useEffect(() => {
@@ -121,51 +173,53 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
         <div className="absolute bottom-12 md:bottom-24 left-6 md:left-20 max-w-4xl text-left z-20">
 
           {/* Phase 0: Main Hero Title (Invisible on load, reveals and triggers text animations on scroll start, remains till the last frame) */}
-          <div style={getOverlayStyle([0.02, 1.0], scrollPercent, true, true)} className="space-y-4 md:space-y-6">
-            <p className="text-[#E6C280] text-[0.65rem] md:text-[0.8rem] font-medium tracking-[0.4em] uppercase animate-pulse">
-              🍵 Crafted with Tradition & Nostalgia
-            </p>
-            <h1 className="text-[11vw] sm:text-[9vw] md:text-8xl lg:text-[7.5rem] font-bold text-white leading-[1.08] tracking-tight">
-              <span className="block overflow-hidden relative h-[1.18em] py-1">
-                <span className="block reveal-text-1 whitespace-nowrap">
-                  OLD SCHOOL
+          {isLoaded && (
+            <div style={getOverlayStyle([0.02, 1.0], scrollPercent, true, true)} className="space-y-4 md:space-y-6">
+              <p className="text-[#E6C280] text-[0.65rem] md:text-[0.8rem] font-medium tracking-[0.4em] uppercase animate-pulse">
+                🍵 Crafted with Tradition & Nostalgia
+              </p>
+              <h1 className="text-[11vw] sm:text-[9vw] md:text-8xl lg:text-[7.5rem] font-bold text-white leading-[1.08] tracking-tight">
+                <span className="block overflow-hidden relative h-[1.18em] py-1">
+                  <span className="block reveal-text-1 whitespace-nowrap">
+                    OLD SCHOOL
+                  </span>
                 </span>
-              </span>
-              <span className="block overflow-hidden relative h-[1.18em] py-1 mt-1">
-                <span className="block text-gold-gradient font-normal italic font-serif reveal-text-2 whitespace-nowrap">
-                  TEA
+                <span className="block overflow-hidden relative h-[1.18em] py-1 mt-1">
+                  <span className="block text-gold-gradient font-normal italic font-serif reveal-text-2 whitespace-nowrap">
+                    TEA
+                  </span>
                 </span>
-              </span>
-            </h1>
-            <p className="text-xs sm:text-sm md:text-lg text-gray-300 max-w-xl font-light leading-relaxed tracking-wide opacity-0 reveal-fade-1">
-              Where pure tea leaves from the misty Western Ghats meet authentic wood-fired clay brewing. Every cup is a sip of soulful memory.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start items-start pt-2 md:pt-4 opacity-0 reveal-fade-2">
-              <button
-                onClick={onExploreClick}
-                className="w-full sm:w-auto luxury-btn luxury-btn-solid px-6 py-3 md:px-8 md:py-3.5 flex items-center justify-center gap-2 group font-semibold text-xs rounded-sm"
-              >
-                Explore The Ritual
-                <Compass className="w-4 h-4 group-hover:rotate-45 transition duration-500" />
-              </button>
-              <button
-                onClick={onMenuClick}
-                className="w-full sm:w-auto luxury-btn luxury-btn-outline px-8 py-3.5 flex items-center justify-center gap-2 group font-semibold text-xs rounded-sm"
-              >
-                View Our Menu
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition duration-300" />
-              </button>
+              </h1>
+              <p className="text-xs sm:text-sm md:text-lg text-gray-300 max-w-xl font-light leading-relaxed tracking-wide opacity-0 reveal-fade-1">
+                Where pure tea leaves from the misty Western Ghats meet authentic wood-fired clay brewing. Every cup is a sip of soulful memory.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start items-start pt-2 md:pt-4 opacity-0 reveal-fade-2">
+                <button
+                  onClick={onExploreClick}
+                  className="w-full sm:w-auto luxury-btn luxury-btn-solid px-6 py-3 md:px-8 md:py-3.5 flex items-center justify-center gap-2 group font-semibold text-xs rounded-sm"
+                >
+                  Explore The Ritual
+                  <Compass className="w-4 h-4 group-hover:rotate-45 transition duration-500" />
+                </button>
+                <button
+                  onClick={onMenuClick}
+                  className="w-full sm:w-auto luxury-btn luxury-btn-outline px-8 py-3.5 flex items-center justify-center gap-2 group font-semibold text-xs rounded-sm"
+                >
+                  View Our Menu
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition duration-300" />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
 
         {/* Scroll down indicator - visible only at the start of scroll */}
         <div
           style={{
-            opacity: scrollPercent > 0.05 ? 0 : 1,
+            opacity: (!isLoaded || scrollPercent > 0.05) ? 0 : 1,
             transition: "opacity 0.3s ease",
-            pointerEvents: scrollPercent > 0.05 ? "none" : "auto",
+            pointerEvents: (!isLoaded || scrollPercent > 0.05) ? "none" : "auto",
           }}
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer z-20 flex flex-col items-center gap-2 group"
           onClick={onStoryScroll}
@@ -178,6 +232,57 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
           </div>
         </div>
 
+      </div>
+
+      {/* Premium Loading Screen Overlay */}
+      <div
+        className={`fixed inset-0 z-50 bg-[#061a16] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${
+          isLoaded ? "opacity-0 pointer-events-none scale-105" : "opacity-100 scale-100"
+        }`}
+      >
+        {/* Elegant background radial glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(230,194,128,0.08)_0%,rgba(0,0,0,0.95)_80%)] pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6 text-center space-y-8">
+          {/* Stylized Logo/Icon */}
+          <div className="relative flex items-center justify-center w-24 h-24 mb-2">
+            {/* Outer spinning/pulsing gold rings */}
+            <div className="absolute inset-0 border border-[#E6C280]/20 rounded-full animate-[spin_10s_linear_infinite]" />
+            <div className="absolute inset-2 border border-[#E6C280]/40 border-t-transparent rounded-full animate-[spin_4s_linear_infinite]" />
+            <div className="absolute inset-4 bg-[#E6C280]/5 rounded-full flex items-center justify-center">
+              <span className="text-3xl animate-pulse">🍵</span>
+            </div>
+          </div>
+
+          {/* Brand Title */}
+          <div className="space-y-3">
+            <h2 className="text-[0.7rem] tracking-[0.4em] text-[#E6C280] uppercase font-semibold">
+              Old School Tea
+            </h2>
+            <p className="font-serif italic text-3xl text-white font-light tracking-wide">
+              Brewing the Experience
+            </p>
+          </div>
+
+          {/* Elegant Progress bar container */}
+          <div className="w-full space-y-4 pt-4">
+            {/* Progress Line */}
+            <div className="h-[2px] w-full bg-white/5 rounded-full overflow-hidden relative">
+              <div
+                className="h-full bg-gold-gradient shadow-[0_0_12px_#E6C280] transition-all duration-300 ease-out"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            
+            {/* Progress Value */}
+            <div className="flex justify-between items-center text-[0.65rem] tracking-widest uppercase text-gray-400 font-semibold px-1">
+              <span className="animate-pulse">Steeping</span>
+              <span className="text-[#E6C280] font-bold">
+                {progressPercent}%
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
