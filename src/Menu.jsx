@@ -77,7 +77,7 @@ export default function Menu() {
       {/* 🌟 HERO HEADER */}
       <section className="text-center py-24 px-6">
 
-        <p className="uppercase tracking-[6px] text-[#D4A373] mb-4">
+        <p className="uppercase tracking-[6px] text-[#E6C280] mb-4">
           Old School Tea
         </p>
 
@@ -98,7 +98,7 @@ export default function Menu() {
           <div key={index} data-aos="fade-up">
 
             {/* CATEGORY TITLE */}
-            <h2 className="text-3xl md:text-4xl text-[#D4A373] mb-10 tracking-[3px] uppercase">
+            <h2 className="text-3xl md:text-4xl text-[#E6C280] mb-10 tracking-[3px] uppercase">
               {section.category}
             </h2>
 
@@ -113,7 +113,7 @@ export default function Menu() {
 
                   {/* LEFT SIDE */}
                   <div>
-                    <h3 className="text-xl md:text-2xl group-hover:text-[#D4A373] transition">
+                    <h3 className="text-xl md:text-2xl group-hover:text-[#E6C280] transition">
                       {item.name}
                     </h3>
                     <p className="text-gray-400 mt-1 text-sm md:text-base">
@@ -122,7 +122,7 @@ export default function Menu() {
                   </div>
 
                   {/* PRICE */}
-                  <div className="text-[#D4A373] text-lg md:text-xl font-semibold">
+                  <div className="text-[#E6C280] text-lg md:text-xl font-semibold">
                     {item.price}
                   </div>
 
@@ -160,7 +160,7 @@ export default function Menu() {
 
         <Link
           to="/"
-          className="inline-block px-8 py-3 border border-[#D4A373] text-[#D4A373] tracking-[3px] hover:bg-[#D4A373] hover:text-black transition"
+          className="inline-block px-8 py-3 border border-[#E6C280] text-[#E6C280] tracking-[3px] hover:bg-[#E6C280] hover:text-black transition"
         >
           ← BACK TO HOME
         </Link>

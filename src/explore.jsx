@@ -24,7 +24,7 @@ export function Explore() {
 
         <div className="relative z-10 px-6" data-aos="fade-up">
 
-          <p className="uppercase tracking-[6px] text-[#D4A373] mb-6">
+          <p className="uppercase tracking-[6px] text-[#E6C280] mb-6">
             A Slow Experience
           </p>
 
@@ -54,7 +54,7 @@ export function Explore() {
           />
 
           <div>
-            <h2 className="text-4xl text-[#D4A373] mb-6">
+            <h2 className="text-4xl text-[#E6C280] mb-6">
               The Origin
             </h2>
 
@@ -71,7 +71,7 @@ export function Explore() {
         <div className="grid md:grid-cols-2 gap-16 items-center" data-aos="fade-up">
 
           <div className="order-2 md:order-1">
-            <h2 className="text-4xl text-[#D4A373] mb-6">
+            <h2 className="text-4xl text-[#E6C280] mb-6">
               The Craft
             </h2>
 
@@ -113,7 +113,7 @@ export function Explore() {
         </h2>
 
         <button
-          className="px-10 py-3 border border-[#D4A373] text-[#D4A373] tracking-[3px] hover:bg-[#D4A373] hover:text-black transition"
+          className="px-10 py-3 border border-[#E6C280] text-[#E6C280] tracking-[3px] hover:bg-[#E6C280] hover:text-black transition"
           onClick={() => window.location.href = "/menu"}
         >
           VIEW MENU

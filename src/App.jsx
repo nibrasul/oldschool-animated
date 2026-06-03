@@ -1,772 +1,1260 @@
-import { useEffect, useState } from "react"
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom"
-import AOS from "aos"
-import "aos/dist/aos.css"
+import { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import {
+  ArrowLeft,
+  Clock,
+  MapPin,
+  Phone,
+  Mail,
+  Sparkles,
+  BookOpen,
+  ArrowRight,
+  Bookmark,
+  Calendar,
+  Layers,
+  ChevronRight,
+} from "lucide-react";
+
+// Local Instagram SVG Icon
+const Instagram = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={props.className || "w-4 h-4"}
+    {...props}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
+// Modular Redesigned Components
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
+import Heritage from "./components/Heritage.jsx";
+import Brews from "./components/Brews.jsx";
+import LocationsSection from "./components/Locations.jsx";
+import Reviews from "./components/Reviews.jsx";
+import Contact from "./components/Contact.jsx";
+import Footer from "./components/Footer.jsx";
+import ReservationModal from "./components/ReservationModal.jsx";
 
 /* ================= UTILITIES ================= */
 const ScrollToTop = () => {
-  const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
-  return null
-}
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
 
-/* ================= ROTATING CUP COMPONENT ================= */
-function RotatingCup() {
-  const [rotation, setRotation] = useState(0)
+/* ================= HOME ================= */
+function Home() {
+  const [showReserveModal, setShowReserveModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY
-      const maxScroll = document.body.scrollHeight - window.innerHeight
-      const scrollPercent = scrollPosition / maxScroll
-      const newRotation = scrollPercent * 360
-      setRotation(newRotation)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-}
-
-/* ================= GOOGLE REVIEWS COMPONENT ================= */
-function GoogleReviews() {
-  const [reviews, setReviews] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({ rating: 0, total: 0 })
-
-  useEffect(() => {
-    setTimeout(() => {
-      setReviews([
-        { author_name: "Rahul Menon", rating: 5, text: "The Sulaimani here is pure nostalgia. Best tea in Kerala!", relative_time_description: "2 weeks ago" },
-        { author_name: "Anjali Nair", rating: 5, text: "Authentic Kerala chai experience. Love the ginger tea!", relative_time_description: "1 month ago" },
-        { author_name: "Vikram Sharma", rating: 5, text: "Old School Tea is my evening ritual. Must visit place!", relative_time_description: "3 weeks ago" },
-        { author_name: "Meera Krishna", rating: 4, text: "Great place for tea lovers. The Masala Chai is excellent!", relative_time_description: "2 months ago" }
-      ])
-      setStats({ rating: 4.8, total: 156 })
-      setLoading(false)
-    }, 1000)
-  }, [])
-
-  const renderStars = (rating) => {
-    return "★".repeat(Math.floor(rating)) + "☆".repeat(5 - Math.floor(rating))
-  }
-
-  if (loading) {
-    return <div className="text-center py-8"><div className="inline-block w-8 h-8 border-4 border-[#D4A373] border-t-transparent rounded-full animate-spin"></div><p className="text-gray-400 mt-2">Loading reviews...</p></div>
-  }
+    AOS.init({ duration: 1200, once: false });
+  }, []);
 
   return (
-    <div>
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-3 bg-[#0a0a0a] px-6 py-3 rounded-full border border-gray-800">
-          <div className="flex items-center gap-1"><span className="text-2xl">⭐</span><span className="text-2xl font-bold text-white">{stats.rating}</span></div>
-          <div className="w-px h-8 bg-gray-700"></div>
-          <div><p className="text-sm text-gray-400">Google Rating</p><p className="text-xs text-gray-500">{stats.total} reviews</p></div>
-        </div>
-      </div>
-      <div className="grid md:grid-cols-2 gap-6">
-        {reviews.map((review, idx) => (
-          <div key={idx} className="bg-[#0a0a0a] p-5 rounded-xl border border-gray-800 hover:border-[#D4A373]/50 transition">
-            <div className="flex justify-between items-start mb-3">
-              <div><p className="font-semibold text-white">{review.author_name}</p><div className="text-yellow-500 text-sm">{renderStars(review.rating)}</div></div>
-              <span className="text-gray-500 text-xs">{review.relative_time_description}</span>
-            </div>
-            <p className="text-gray-300 text-sm">{review.text}</p>
-          </div>
-        ))}
-      </div>
+    <div className="relative bg-[#061a16] text-white min-h-screen">
+      {/* Luxury Navbar */}
+      <Navbar onReserveClick={() => setShowReserveModal(true)} />
+
+      {/* Luxury Hero */}
+      <Hero
+        onExploreClick={() => navigate("/explore")}
+        onMenuClick={() => navigate("/menu")}
+        onStoryScroll={() => {
+          document.getElementById("story")?.scrollIntoView({ behavior: "smooth" });
+        }}
+      />
+
+      {/* Redesigned Premium Sections */}
+      <Heritage />
+      <Brews onFullMenuClick={() => navigate("/menu")} />
+      <LocationsSection />
+      <Reviews />
+      <Contact />
+      
+      {/* Luxury Footer */}
+      <Footer />
+
+      {/* Reservation Dialog Modal */}
+      <ReservationModal
+        isOpen={showReserveModal}
+        onClose={() => setShowReserveModal(false)}
+      />
     </div>
-  )
+  );
 }
 
 /* ================= ABOUT US PAGE ================= */
 function AboutUs() {
-  const navigate = useNavigate()
-  useEffect(() => { AOS.init({ duration: 1200 }) }, [])
+  const navigate = useNavigate();
+  useEffect(() => {
+    AOS.init({ duration: 1200 });
+  }, []);
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      <div className="p-6">
-        <button onClick={() => navigate("/")} className="border border-[#D4A373] px-5 py-2 text-[#D4A373] rounded-lg hover:bg-[#D4A373] hover:text-black transition">← BACK HOME</button>
+    <div className="bg-[#061a16] text-white min-h-screen relative overflow-hidden">
+      {/* Glow Effect */}
+      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#E6C280]/5 rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Sticky Sub Header */}
+      <div className="p-6 sticky top-0 bg-[#061a16]/80 backdrop-blur-xl border-b border-white/5 z-30 flex justify-between items-center">
+        <button
+          onClick={() => navigate("/")}
+          className="luxury-btn luxury-btn-outline px-5 py-2 flex items-center gap-2 rounded-sm text-xs"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back Home
+        </button>
+        <span className="font-bold tracking-[0.25em] text-sm text-[#E6C280]">ABOUT US</span>
+        <div className="w-20 hidden md:block"></div>
       </div>
-      <div className="px-6 md:px-20 py-12">
-        <div className="text-center mb-12" data-aos="fade-up">
-          <h1 className="text-5xl font-bold mb-4">About <span className="text-[#D4A373]">Us</span></h1>
-          <div className="w-20 h-1 bg-[#D4A373] mx-auto"></div>
+
+      {/* Page Content */}
+      <div className="max-w-6xl mx-auto px-6 md:px-12 py-20 space-y-24">
+        {/* Banner Title */}
+        <div className="text-center space-y-4" data-aos="fade-up">
+          <h1 className="text-4xl md:text-7xl font-bold leading-tight">
+            Our Story & <span className="text-gold-gradient font-serif italic font-normal">Origins</span>
+          </h1>
+          <div className="w-20 h-px bg-[#E6C280] mx-auto mt-4"></div>
         </div>
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div data-aos="fade-right">
-            <img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002" className="rounded-2xl w-full h-[400px] object-cover shadow-2xl" alt="About" />
+
+        {/* Content Splitted */}
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="relative" data-aos="fade-right">
+            <div className="luxury-zoom-container relative aspect-[4/5] md:h-[450px]">
+              <img
+                src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002"
+                className="luxury-zoom-image w-full h-full object-cover brightness-75"
+                alt="About"
+              />
+            </div>
+            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-[#E6C280]/5 rounded-full blur-3xl pointer-events-none" />
           </div>
-          <div data-aos="fade-left">
-            <h2 className="text-3xl font-bold mb-4">Our Story</h2>
-            <p className="text-gray-300 leading-relaxed mb-4">Founded in 2025, Old School Tea brings the authentic taste of Kerala to every cup. Located in the heart of Kodungallur, we've become a beloved destination for tea enthusiasts.</p>
-            <p className="text-gray-300 leading-relaxed mb-4">Our mission is to preserve the traditional tea brewing methods passed down through generations while creating a warm, nostalgic atmosphere for our customers.</p>
-            <p className="text-gray-300 leading-relaxed">We source our tea leaves directly from the pristine Western Ghats, ensuring every cup is fresh, aromatic, and full of character.</p>
+
+          <div className="space-y-6" data-aos="fade-left">
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-px bg-[#E6C280]"></span>
+              <span className="text-[#E6C280] text-[0.7rem] uppercase tracking-widest font-semibold">
+                Est. 2018
+              </span>
+            </div>
+            
+            <h2 className="text-2xl md:text-4xl font-bold">The Art of Revival</h2>
+            
+            <p className="text-gray-400 leading-relaxed font-light text-sm md:text-base">
+              Founded originally as a passion project, Old School Tea Kottapuram was born out of a desire to preserve the authentic road-side tea culture of Kerala. We combine generation-old wooden-stove brewing methods with beautiful modern dark glass aesthetics.
+            </p>
+            
+            <p className="text-gray-400 leading-relaxed font-light text-sm md:text-base">
+              Our signature blends are made utilizing raw cardamom, dry ginger, cloves, and premium organic CTC leaves sourced directly from high-summit hills.
+            </p>
+
+            <div className="pt-4 flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => navigate("/menu")}
+                className="luxury-btn luxury-btn-solid px-6 py-3 text-xs flex items-center justify-center gap-2 rounded-sm"
+              >
+                Browse Menu
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
+      
+      {/* Minimal Footer */}
+      <footer className="py-12 border-t border-white/5 bg-black/60 text-center">
+        <p className="text-gray-500 text-xs font-light tracking-wide">
+          &copy; {new Date().getFullYear()} Old School Tea &mdash; Preserving Traditions
+        </p>
+      </footer>
     </div>
-  )
+  );
 }
 
 /* ================= OUR TEAS PAGE ================= */
 function OurTeas() {
-  const navigate = useNavigate()
-  useEffect(() => { AOS.init({ duration: 1200 }) }, [])
+  const navigate = useNavigate();
+  useEffect(() => {
+    AOS.init({ duration: 1200 });
+  }, []);
 
   const teas = [
-    { name: "Ginger Tea", desc: "Fresh ginger infusion with premium Assam leaves", price: "₹49", img: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f" },
-    { name: "Sulaimani", desc: "Traditional Kerala black tea with lemon", price: "₹59", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c" },
-    { name: "Mint Tea", desc: "Refreshing Himalayan mint green tea", price: "₹69", img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085" },
-    { name: "Masala Chai", desc: "Spiced chai with cardamom & cloves", price: "₹79", img: "https://images.unsplash.com/photo-1576092768241-ec7dfd6f98bb" },
-    { name: "Kashmiri Kahwa", desc: "Saffron & almond infused green tea", price: "₹99", img: "https://images.unsplash.com/photo-1598866594230-a7c12756260f" },
-    { name: "Matcha Latte", desc: "Premium Japanese matcha with steamed milk", price: "₹129", img: "https://images.unsplash.com/photo-1534777367038-9404f45b869b" }
-  ]
+    {
+      name: "Ginger Tea",
+      desc: "Fresh ginger infusion simmered with premium Assam leaves",
+      price: "₹49",
+      img: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f",
+      badge: "Bestseller",
+    },
+    {
+      name: "Sulaimani",
+      desc: "Traditional Kerala amber tea brewed with local spices & lemon",
+      price: "₹59",
+      img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c",
+      badge: "Signature",
+    },
+    {
+      name: "Mint Tea",
+      desc: "Refreshing organic mountain mint steeped with light green tea",
+      price: "₹69",
+      img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
+      badge: "Popular",
+    },
+    {
+      name: "Masala Chai",
+      desc: "Rich, bold spiced chai infused with crushed cardamom & cloves",
+      price: "₹79",
+      img: "https://images.unsplash.com/photo-1576092768241-ec7dfd6f98bb",
+      badge: "Classic Spiced",
+    },
+    {
+      name: "Kashmiri Kahwa",
+      desc: "Saffron strands & crushed almond flakes infused in green tea",
+      price: "₹99",
+      img: "https://images.unsplash.com/photo-1598866594230-a7c12756260f",
+      badge: "Royal Blend",
+    },
+    {
+      name: "Matcha Latte",
+      desc: "Pure organic Japanese stone-ground matcha with steamed milk",
+      price: "₹129",
+      img: "https://images.unsplash.com/photo-1534777367038-9404f45b869b",
+      badge: "Premium East",
+    },
+  ];
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      <div className="p-6">
-        <button onClick={() => navigate("/")} className="border border-[#D4A373] px-5 py-2 text-[#D4A373] rounded-lg hover:bg-[#D4A373] hover:text-black transition">← BACK HOME</button>
+    <div className="bg-[#061a16] text-white min-h-screen relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#E6C280]/5 rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Sub Header */}
+      <div className="p-6 sticky top-0 bg-[#061a16]/80 backdrop-blur-xl border-b border-white/5 z-30 flex justify-between items-center">
+        <button
+          onClick={() => navigate("/")}
+          className="luxury-btn luxury-btn-outline px-5 py-2 flex items-center gap-2 rounded-sm text-xs"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back Home
+        </button>
+        <span className="font-bold tracking-[0.25em] text-sm text-[#E6C280]">TEA COLLECTION</span>
+        <div className="w-20 hidden md:block"></div>
       </div>
-      <div className="px-6 md:px-20 py-12">
-        <div className="text-center mb-12" data-aos="fade-up">
-          <h1 className="text-5xl font-bold mb-4">Our <span className="text-[#D4A373]">Teas</span></h1>
-          <div className="w-20 h-1 bg-[#D4A373] mx-auto"></div>
-          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">Discover our carefully curated collection of premium teas</p>
+
+      <div className="max-w-6xl mx-auto px-6 md:px-12 py-20">
+        <div className="text-center space-y-4 mb-20" data-aos="fade-up">
+          <h1 className="text-4xl md:text-7xl font-bold leading-tight">
+            Our Crafted <span className="text-gold-gradient font-serif italic font-normal">Teas</span>
+          </h1>
+          <div className="w-20 h-px bg-[#E6C280] mx-auto mt-4"></div>
+          <p className="text-gray-400 font-light max-w-lg mx-auto text-sm md:text-base mt-2">
+            Explore our curated series of premium, wood-fired specialty teas.
+          </p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        {/* Collection Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {teas.map((tea, idx) => (
-            <div key={idx} className="bg-[#111] rounded-2xl overflow-hidden border border-gray-800 hover:border-[#D4A373] transition" data-aos="fade-up" data-aos-delay={idx*100}>
-              <img src={tea.img} className="h-56 w-full object-cover" alt={tea.name} />
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-bold">{tea.name}</h3>
-                  <span className="text-[#D4A373] font-bold">{tea.price}</span>
+            <div
+              key={idx}
+              className="glass-card rounded-sm overflow-hidden border-white/5 flex flex-col justify-between"
+              data-aos="fade-up"
+              data-aos-delay={idx * 80}
+            >
+              <div className="relative aspect-[16/11] overflow-hidden">
+                <img
+                  src={tea.img}
+                  className="w-full h-full object-cover brightness-[0.8]"
+                  alt={tea.name}
+                />
+                <span className="absolute top-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1 text-[#E6C280] border border-[#E6C280]/20 text-[0.6rem] tracking-wider uppercase font-bold rounded-sm">
+                  {tea.badge}
+                </span>
+              </div>
+              <div className="p-6 space-y-4 flex-grow flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-baseline mb-2">
+                    <h3 className="text-lg md:text-xl font-bold text-white tracking-wide">{tea.name}</h3>
+                    <span className="text-[#E6C280] font-bold text-sm md:text-base">{tea.price}</span>
+                  </div>
+                  <p className="text-gray-400 text-xs md:text-sm font-light leading-relaxed">{tea.desc}</p>
                 </div>
-                <p className="text-gray-400 text-sm">{tea.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      <footer className="py-12 border-t border-white/5 bg-black/60 text-center">
+        <p className="text-gray-500 text-xs font-light tracking-wide">
+          &copy; {new Date().getFullYear()} Old School Tea &mdash; Pure Infusions
+        </p>
+      </footer>
     </div>
-  )
+  );
 }
 
 /* ================= LOCATIONS PAGE ================= */
-function Locations() {
-  const navigate = useNavigate()
-  useEffect(() => { AOS.init({ duration: 1200 }) }, [])
+function LocationsPage() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    AOS.init({ duration: 1200 });
+  }, []);
 
   const locations = [
-    { name: "Kodungallur (Headquarters)", address: "Kottapuram, Kodungallur, Kerala - 680667", hours: "8:00 AM - 10:00 PM", phone: "+91 98765 43210" },
-    { name: "Thrissur", address: "Near Round East, Thrissur, Kerala - 680001", hours: "9:00 AM - 9:00 PM", phone: "+91 98765 43211", comingSoon: true },
-    { name: "Kochi", address: "MG Road, Ernakulam, Kochi - 682011", hours: "Coming Soon", phone: "-", comingSoon: true }
-  ]
+    {
+      name: "Kodungallur (Headquarters)",
+      address: "Kottapuram, Kodungallur, Kerala - 680667",
+      hours: "8:00 AM - 10:00 PM",
+      phone: "+91 98765 43210",
+      comingSoon: false,
+    },
+    {
+      name: "Thrissur Round East",
+      address: "Opposite Round East, Thrissur, Kerala - 680001",
+      hours: "9:00 AM - 9:00 PM",
+      phone: "+91 98765 43211",
+      comingSoon: true,
+    },
+    {
+      name: "Kochi Marine Drive",
+      address: "Marine Drive, Ernakulam, Kochi - 682011",
+      hours: "Opening Soon",
+      phone: "-",
+      comingSoon: true,
+    },
+  ];
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      <div className="p-6">
-        <button onClick={() => navigate("/")} className="border border-[#D4A373] px-5 py-2 text-[#D4A373] rounded-lg hover:bg-[#D4A373] hover:text-black transition">← BACK HOME</button>
+    <div className="bg-[#061a16] text-white min-h-screen relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#E6C280]/5 rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Sub Header */}
+      <div className="p-6 sticky top-0 bg-[#061a16]/80 backdrop-blur-xl border-b border-white/5 z-30 flex justify-between items-center">
+        <button
+          onClick={() => navigate("/")}
+          className="luxury-btn luxury-btn-outline px-5 py-2 flex items-center gap-2 rounded-sm text-xs"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back Home
+        </button>
+        <span className="font-bold tracking-[0.25em] text-sm text-[#E6C280]">LOCATIONS</span>
+        <div className="w-20 hidden md:block"></div>
       </div>
-      <div className="px-6 md:px-20 py-12">
-        <div className="text-center mb-12" data-aos="fade-up">
-          <h1 className="text-5xl font-bold mb-4">Our <span className="text-[#D4A373]">Locations</span></h1>
-          <div className="w-20 h-1 bg-[#D4A373] mx-auto"></div>
-          <p className="text-gray-400 mt-4">Find an Old School Tea near you</p>
+
+      <div className="max-w-6xl mx-auto px-6 md:px-12 py-20 space-y-16">
+        <div className="text-center space-y-4" data-aos="fade-up">
+          <h1 className="text-4xl md:text-7xl font-bold leading-tight">
+            Our Teahouse <span className="text-gold-gradient font-serif italic font-normal">Spots</span>
+          </h1>
+          <div className="w-20 h-px bg-[#E6C280] mx-auto mt-4"></div>
         </div>
-        <div className="grid md:grid-cols-2 gap-8">
+
+        {/* Location Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {locations.map((loc, idx) => (
-            <div key={idx} className="bg-[#111] rounded-2xl p-6 border border-gray-800 hover:border-[#D4A373] transition" data-aos="fade-up" data-aos-delay={idx*100}>
-              {loc.comingSoon && <span className="text-xs bg-[#D4A373] text-black px-2 py-1 rounded-full">Coming Soon</span>}
-              <h2 className="text-2xl font-bold mt-2 mb-3">{loc.name}</h2>
-              <p className="text-gray-400 mb-2">📍 {loc.address}</p>
-              <p className="text-gray-400 mb-2">🕒 {loc.hours}</p>
-              <p className="text-gray-400">📞 {loc.phone}</p>
+            <div
+              key={idx}
+              className="glass-card p-8 rounded-sm border-white/5 flex flex-col justify-between min-h-[260px] relative"
+              data-aos="fade-up"
+              data-aos-delay={idx * 100}
+            >
+              {loc.comingSoon && (
+                <span className="absolute top-6 right-6 px-2.5 py-0.5 bg-[#E6C280]/15 text-[#E6C280] border border-[#E6C280]/20 text-[0.55rem] font-bold uppercase tracking-widest rounded-sm">
+                  Coming Soon
+                </span>
+              )}
+              
+              <div className="space-y-4">
+                <h2 className="text-xl md:text-2xl font-bold text-white tracking-wide">{loc.name}</h2>
+                <div className="space-y-2 text-xs md:text-sm text-gray-400 font-light">
+                  <p className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-[#E6C280] shrink-0 mt-0.5" />
+                    {loc.address}
+                  </p>
+                  <p className="flex items-center gap-2.5">
+                    <Clock className="w-4 h-4 text-[#E6C280] shrink-0" />
+                    {loc.hours}
+                  </p>
+                  <p className="flex items-center gap-2.5">
+                    <Phone className="w-4 h-4 text-[#E6C280] shrink-0" />
+                    {loc.phone}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-        <div className="mt-12 text-center" data-aos="fade-up">
-          <h3 className="text-2xl font-bold mb-4">Main Location Map</h3>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3926.7732585685603!2d76.20147767503383!3d10.199059989916753!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b081b00520d00e5%3A0x3a9412bf771bc687!2sOLD%20SCHOOL%20TEA%20KODUNGALLUR!5e0!3m2!1sen!2sin!4v1779822855061!5m2!1sen!2sin"
-            width="100%"
-            height="400"
-            className="rounded-2xl"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            title="Location Map"
-          ></iframe>
+
+        {/* Main Map */}
+        <div className="mt-16 text-center space-y-6" data-aos="fade-up">
+          <h3 className="text-xl md:text-2xl font-bold tracking-wide">Main Kottapuram Location</h3>
+          <div className="shadow-2xl border border-white/10 rounded-sm overflow-hidden h-[400px]">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3926.7732585685603!2d76.20147767503383!3d10.199059989916753!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b081b00520d00e5%3A0x3a9412bf771bc687!2sOLD%20SCHOOL%20TEA%20KODUNGALLUR!5e0!3m2!1sen!2sin!4v1779822855061!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              title="Location Map"
+              className="grayscale-[0.9] invert-[0.92] contrast-[1.1] brightness-[0.88]"
+            ></iframe>
+          </div>
         </div>
       </div>
+
+      <footer className="py-12 border-t border-white/5 bg-black/60 text-center">
+        <p className="text-gray-500 text-xs font-light tracking-wide">
+          &copy; {new Date().getFullYear()} Old School Tea &mdash; Local Spots
+        </p>
+      </footer>
     </div>
-  )
+  );
 }
 
-/* ================= HOME ================= */
-function Home() {
-  const navigate = useNavigate()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [selectedTea, setSelectedTea] = useState(null)
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" })
-  const [subscribeEmail, setSubscribeEmail] = useState("")
-  const [showReserveModal, setShowReserveModal] = useState(false)
-  const [reservationData, setReservationData] = useState({ name: "", date: "", time: "", guests: "2" })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+/* ================= CONTACT PAGE ================= */
+function ContactPage() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    AOS.init({ duration: 1200, once: false })
-  }, [])
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id)
-    if (element) element.scrollIntoView({ behavior: "smooth" })
-  }
+    const message = `📩 NEW CONTACT FORM MESSAGE
+━━━━━━━━━━━━━━━━━━━━━━━
+👤 Name: ${formData.name}
+📧 Email: ${formData.email}
+💬 Message: ${formData.message}
+🕒 Sent On: ${new Date().toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━━━━`;
 
-  const handleFormChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value })
-  const handleReservationChange = (e) => setReservationData({ ...reservationData, [e.target.name]: e.target.value })
-  const handleSubscribe = (e) => { e.preventDefault(); if (subscribeEmail) { alert(`Thanks for subscribing with ${subscribeEmail}!`); setSubscribeEmail("") } }
-  
-  const handleReservationSubmit = (e) => { 
-    e.preventDefault(); 
-    alert(`Reservation confirmed for ${reservationData.name} on ${reservationData.date} at ${reservationData.time} for ${reservationData.guests} guests.`); 
-    setShowReserveModal(false); 
-    setReservationData({ name: "", date: "", time: "", guests: "2" }) 
-  }
+    const formPayload = new FormData();
+    formPayload.append("access_key", "d5bb3ce5-742d-4dd2-a791-70a089d1e9e1");
+    formPayload.append("message", message);
+    formPayload.append("name", formData.name);
+    formPayload.append("email", formData.email);
+    formPayload.append("subject", "📬 New Contact Form Submission - Old School Tea");
 
-  const handleContactSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    const message = `Name: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}\nTime: ${new Date().toLocaleString()}`
-    
-    const formPayload = new FormData()
-    formPayload.append('access_key', 'd5bb3ce5-742d-4dd2-a791-70a089d1e9e1')
-    formPayload.append('message', message)
-    formPayload.append('name', formData.name)
-    formPayload.append('email', formData.email)
-    formPayload.append('subject', 'New Contact Form Submission - Old School Tea')
-    
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formPayload
-      })
-      const data = await response.json()
-      
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formPayload,
+      });
+      const data = await response.json();
+
       if (data.success) {
-        alert(`Thank you ${formData.name}! Your message has been sent successfully. We'll get back to you soon.`)
-        setFormData({ name: "", email: "", message: "" })
+        alert(
+          `✅ Thank you ${formData.name}! Your message has been sent successfully. We'll get back to you soon.`
+        );
+        setFormData({ name: "", email: "", message: "" });
       } else {
-        alert('Something went wrong. Please try again later.')
+        alert("❌ Something went wrong. Please try again later.");
       }
     } catch (error) {
-      console.error('Error submitting form:', error)
-      alert('Network error. Please try again.')
+      console.error("Error submitting form:", error);
+      alert("❌ Network error. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
-
-  const teaDetails = {
-    "Ginger Tea": { description: "Freshly grated ginger simmered with premium Assam tea leaves.", benefits: ["Boosts immunity", "Aids digestion", "Reduces inflammation"] },
-    "Sulaimani": { description: "Traditional Kerala black tea with cardamom, cloves, and cinnamon.", benefits: ["Rich in antioxidants", "Improves heart health", "Boosts energy"] },
-    "Mint Tea": { description: "Fresh Himalayan mint leaves steeped with green tea.", benefits: ["Relieves stress", "Aids digestion", "Freshens breath"] }
-  }
-
-  const teaList = [
-    { title: "Ginger Tea", desc: "Rich spice notes", img: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f", price: "₹49", popularity: "Bestseller" },
-    { title: "Sulaimani", desc: "Traditional soul tea", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c", price: "₹59", popularity: "Signature" },
-    { title: "Mint Tea", desc: "Refreshing brew", img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085", price: "₹69", popularity: "Popular" }
-  ]
-
-  const openingHours = [
-    { day: "Monday - Friday", hours: "8:00 AM - 9:00 PM" },
-    { day: "Saturday", hours: "9:00 AM - 10:00 PM" },
-    { day: "Sunday", hours: "9:00 AM - 8:00 PM" }
-  ]
+  };
 
   return (
-    <div className="bg-black text-white overflow-hidden">
-      {showReserveModal && (<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90" onClick={() => setShowReserveModal(false)}><div className="bg-[#111] p-8 rounded-2xl max-w-md w-full border border-[#D4A373]/30" onClick={(e) => e.stopPropagation()}><h3 className="text-2xl font-bold text-[#D4A373] mb-4">Make a Reservation</h3><form onSubmit={handleReservationSubmit} className="space-y-4"><input type="text" name="name" placeholder="Your Name" value={reservationData.name} onChange={handleReservationChange} className="w-full p-3 bg-black border border-gray-700 rounded-lg" required /><input type="date" name="date" value={reservationData.date} onChange={handleReservationChange} className="w-full p-3 bg-black border border-gray-700 rounded-lg" required /><input type="time" name="time" value={reservationData.time} onChange={handleReservationChange} className="w-full p-3 bg-black border border-gray-700 rounded-lg" required /><select name="guests" value={reservationData.guests} onChange={handleReservationChange} className="w-full p-3 bg-black border border-gray-700 rounded-lg">{ [1,2,3,4,5,6,7,8].map(n => <option key={n} value={n}>{n} {n === 1 ? "Guest" : "Guests"}</option>) }</select><div className="flex gap-3"><button type="button" onClick={() => setShowReserveModal(false)} className="flex-1 px-4 py-2 border border-gray-600 rounded-lg">Cancel</button><button type="submit" className="flex-1 px-4 py-2 bg-[#D4A373] text-black rounded-lg font-semibold">Confirm</button></div></form></div></div>)}
-      {selectedTea && (<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90" onClick={() => setSelectedTea(null)}><div className="bg-[#111] p-8 rounded-2xl max-w-md w-full border border-[#D4A373]/30" onClick={(e) => e.stopPropagation()}><h3 className="text-2xl font-bold text-[#D4A373] mb-2">{selectedTea}</h3><p className="text-gray-300 text-sm mb-4">{teaDetails[selectedTea]?.description}</p><div className="mb-4"><p className="text-[#D4A373] font-semibold mb-2">Health Benefits:</p><ul className="space-y-1">{teaDetails[selectedTea]?.benefits.map((b, i) => (<li key={i} className="text-gray-400 text-sm flex items-center gap-2">✓ {b}</li>))}</ul></div><button onClick={() => setSelectedTea(null)} className="w-full px-4 py-2 bg-[#D4A373] text-black rounded-lg">Close</button></div></div>)}
+    <div className="bg-[#061a16] text-white min-h-screen relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#E6C280]/5 rounded-full blur-[140px] pointer-events-none" />
 
-      <header className="fixed top-0 left-0 w-full z-50 bg-black/30 backdrop-blur-md">
-        <div className="flex justify-between items-center px-5 md:px-16 py-4 md:py-6">
-          <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#D4A373] animate-pulse"></div><h1 className="text-lg md:text-2xl tracking-[3px] font-semibold">OLD SCHOOL TEA</h1></div>
-          <nav className="hidden md:flex gap-10 uppercase text-sm tracking-[3px]"><a href="#story" className="hover:text-[#D4A373] transition">Story</a><a href="#teas" className="hover:text-[#D4A373] transition">Teas</a><a href="#location" className="hover:text-[#D4A373] transition">Visit</a><a href="#reviews" className="hover:text-[#D4A373] transition">Reviews</a><a href="#contact" className="hover:text-[#D4A373] transition">Contact</a></nav>
-          <button onClick={() => setShowReserveModal(true)} className="hidden md:block px-4 py-2 border border-[#D4A373] text-[#D4A373] text-sm hover:bg-[#D4A373] hover:text-black transition rounded-lg">RESERVE</button>
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-2xl">☰</button>
+      {/* Sub Header */}
+      <div className="p-6 sticky top-0 bg-[#061a16]/80 backdrop-blur-xl border-b border-white/5 z-30 flex justify-between items-center">
+        <button
+          onClick={() => navigate("/")}
+          className="luxury-btn luxury-btn-outline px-5 py-2 flex items-center gap-2 rounded-sm text-xs"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back Home
+        </button>
+        <span className="font-bold tracking-[0.25em] text-sm text-[#E6C280]">CONTACT US</span>
+        <div className="w-20 hidden md:block"></div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 md:px-12 py-20 space-y-16">
+        <div className="text-center space-y-4" data-aos="fade-up">
+          <h1 className="text-4xl md:text-7xl font-bold leading-tight">
+            Connect With <span className="text-gold-gradient font-serif italic font-normal">Us</span>
+          </h1>
+          <div className="w-20 h-px bg-[#E6C280] mx-auto mt-4"></div>
         </div>
-        {isMenuOpen && (<div className="md:hidden bg-black/95 backdrop-blur-md p-4 flex flex-col gap-4 text-center"><a href="#story" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-[#D4A373]">STORY</a><a href="#teas" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-[#D4A373]">TEAS</a><a href="#location" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-[#D4A373]">VISIT</a><a href="#reviews" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-[#D4A373]">REVIEWS</a><a href="#contact" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-[#D4A373]">CONTACT</a><button onClick={() => { setShowReserveModal(true); setIsMenuOpen(false) }} className="py-2 border border-[#D4A373] text-[#D4A373]">RESERVE</button></div>)}
-      </header>
 
-      <section className="relative h-screen flex items-center justify-center text-center">
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover"><source src="/videos/hero.mp4" type="video/mp4" /></video>
-        <div className="absolute inset-0 bg-black/70" />
-        <div className="relative z-10 px-4" data-aos="fade-up"><RotatingCup /><h1 className="text-4xl md:text-[120px] font-semibold">OLD SCHOOL <span className="text-[#D4A373]">TEA</span></h1><p className="mt-5 text-gray-300 max-w-xl mx-auto">Where nostalgia is brewed into every cup.</p><div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center"><button onClick={() => navigate("/explore")} className="group px-6 py-3 border border-[#D4A373] text-[#D4A373] hover:bg-[#D4A373] hover:text-black transition flex items-center gap-2">Explore <span className="group-hover:translate-x-1 transition">→</span></button><button onClick={() => navigate("/menu")} className="px-6 py-3 bg-[#D4A373] text-black hover:bg-[#c49264] transition font-semibold">View Menu</button></div></div>
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer" onClick={() => scrollToSection("story")}><div className="w-6 h-10 border-2 border-white rounded-full flex justify-center"><div className="w-1 h-2 bg-white rounded-full mt-2 animate-pulse"></div></div></div>
-      </section>
-
-      <section id="story" className="py-24 px-6 md:px-20 bg-[#111]">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div data-aos="fade-right"><div className="relative"><img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002" className="rounded-2xl w-full h-[450px] object-cover shadow-2xl" /><div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[#D4A373]/20 rounded-full blur-2xl"></div></div></div>
-          <div data-aos="fade-left"><p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">Our Heritage</p><h2 className="text-4xl md:text-5xl font-bold mb-6">Steeped In <br/>Tradition</h2><p className="text-gray-400 leading-relaxed mb-4">Old School Tea brings nostalgia and premium ambience together with authentic taste. Founded in the heart of Kodungallur, we revive the authentic tea culture of Kerala.</p><p className="text-gray-400 leading-relaxed mb-6">Every leaf is handpicked from the pristine Western Ghats, brewed with time-honoured techniques passed down through generations.</p><div className="flex gap-8 pt-4"><div><span className="text-3xl font-bold text-[#D4A373]">50+</span><p className="text-gray-500 text-sm">Tea Variants</p></div><div><span className="text-3xl font-bold text-[#D4A373]">10K+</span><p className="text-gray-500 text-sm">Happy Customers</p></div><div><span className="text-3xl font-bold text-[#D4A373]">5★</span><p className="text-gray-500 text-sm">Rating</p></div></div></div>
-        </div>
-      </section>
-
-      <section id="teas" className="py-24 px-6 md:px-20">
-        <div className="text-center mb-16" data-aos="fade-up"><p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">Signature Brews</p><h2 className="text-4xl md:text-5xl font-bold">Crafted For Perfect Evenings</h2><div className="w-20 h-1 bg-[#D4A373] mx-auto mt-4"></div></div>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">{teaList.map((t, i) => (<div key={i} className="group relative rounded-2xl overflow-hidden cursor-pointer" data-aos="zoom-in" data-aos-delay={i*100}><img src={t.img} className="h-[420px] w-full object-cover group-hover:scale-110 transition duration-700" /><div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div><div className="absolute top-4 right-4"><span className="px-3 py-1 bg-[#D4A373] text-black text-xs rounded-full font-semibold">{t.popularity}</span></div><div className="absolute bottom-6 left-6"><h3 className="text-2xl font-bold">{t.title}</h3><p className="text-gray-300">{t.desc}</p><p className="text-[#D4A373] font-bold mt-2">{t.price}</p><button onClick={() => setSelectedTea(t.title)} className="mt-3 border border-[#D4A373] px-4 py-1 text-sm rounded-full hover:bg-[#D4A373] hover:text-black transition">Learn More</button></div></div>))}</div>
-        <div className="text-center mt-12"><button onClick={() => navigate("/menu")} className="px-8 py-3 border border-[#D4A373] text-[#D4A373] hover:bg-[#D4A373] hover:text-black transition rounded-lg">View Full Menu →</button></div>
-      </section>
-
-      <section className="py-16 px-6 md:px-20 bg-[#0a0a0a]"><div className="text-center mb-10" data-aos="fade-up"><h2 className="text-3xl font-bold">Opening Hours</h2><div className="w-16 h-1 bg-[#D4A373] mx-auto mt-3"></div></div><div className="max-w-md mx-auto space-y-4">{openingHours.map((item, idx) => (<div key={idx} className="flex justify-between items-center py-3 border-b border-gray-800"><span className="font-semibold">{item.day}</span><span className="text-gray-400">{item.hours}</span></div>))}</div></section>
-
-      <section id="location" className="py-24 text-center px-6"><h2 className="text-4xl text-[#D4A373] mb-4">Visit Us</h2><p className="text-gray-400 mb-6">Kottapuram, Kodungallur, Kerala</p><div className="flex justify-center"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3926.7732585685603!2d76.20147767503383!3d10.199059989916753!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b081b00520d00e5%3A0x3a9412bf771bc687!2sOLD%20SCHOOL%20TEA%20KODUNGALLUR!5e0!3m2!1sen!2sin!4v1779822855061!5m2!1sen!2sin" width="100%" height="450" className="max-w-4xl mx-auto rounded-2xl" style={{ border: 0 }} allowFullScreen loading="lazy" title="Old School Tea Location"></iframe></div><div className="mt-8 flex justify-center gap-6 flex-wrap"><div className="flex items-center gap-2"><span>📍</span> Next to Kottapuram Bridge</div><div className="flex items-center gap-2"><span>🅿️</span> Free Parking Available</div><div className="flex items-center gap-2"><span>♿</span> Wheelchair Accessible</div></div></section>
-
-      <section id="reviews" className="py-24 px-6 md:px-20 bg-[#111]"><div className="text-center mb-12" data-aos="fade-up"><p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">Customer Feedback</p><h2 className="text-4xl font-bold">What Our Customers Say</h2><div className="w-20 h-1 bg-[#D4A373] mx-auto mt-4"></div></div><GoogleReviews /></section>
-
-      <section id="contact" className="py-24 px-6 md:px-20 bg-black">
-        <div className="grid md:grid-cols-2 gap-16">
-          <div data-aos="fade-right">
-            <h2 className="text-4xl text-[#D4A373] mb-6">Contact Us</h2>
-            <p className="text-gray-400 mb-8">Have questions or want to host an event? Reach out to us.</p>
-            <div className="space-y-6">
-              <div className="flex items-center gap-4"><div className="w-12 h-12 rounded-full bg-[#D4A373]/10 flex items-center justify-center text-2xl">📞</div><div><p className="font-bold">Phone</p><p className="text-gray-400">+91 98765 43210</p></div></div>
-              <div className="flex items-center gap-4"><div className="w-12 h-12 rounded-full bg-[#D4A373]/10 flex items-center justify-center text-2xl">✉️</div><div><p className="font-bold">Email</p><p className="text-gray-400">oldschooletea@gmail.com</p></div></div>
-              <div className="flex items-center gap-4"><div className="w-12 h-12 rounded-full bg-[#D4A373]/10 flex items-center justify-center text-2xl">📷</div><div><p className="font-bold">Instagram</p><p className="text-gray-400">@oldschooltea</p></div></div>
+        <div className="grid md:grid-cols-2 gap-12">
+          {/* Info Card */}
+          <div className="glass-panel p-8 rounded-sm border-white/5 space-y-6">
+            <h2 className="text-2xl font-bold tracking-wide">Direct Desk</h2>
+            <div className="space-y-4 text-xs md:text-sm text-gray-400 font-light">
+              <p className="flex items-start gap-3">
+                <MapPin className="w-4.5 h-4.5 text-[#E6C280] shrink-0 mt-0.5" />
+                <span>Kottapuram, Kodungallur, Kerala - 680667</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <Phone className="w-4.5 h-4.5 text-[#E6C280] shrink-0" />
+                <span>+91 98765 43210</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <Mail className="w-4.5 h-4.5 text-[#E6C280] shrink-0" />
+                <span>oldschooletea@gmail.com</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <Clock className="w-4.5 h-4.5 text-[#E6C280] shrink-0" />
+                <span>Mon-Sun: 8:00 AM - 10:00 PM</span>
+              </p>
             </div>
           </div>
-          <div data-aos="fade-left">
-            <form className="space-y-5" onSubmit={handleContactSubmit}>
-              <input type="text" name="name" placeholder="Your Name" value={formData.name} onChange={handleFormChange} className="w-full p-4 bg-[#111] border border-gray-800 rounded-lg focus:outline-none focus:border-[#D4A373] transition" required />
-              <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleFormChange} className="w-full p-4 bg-[#111] border border-gray-800 rounded-lg focus:outline-none focus:border-[#D4A373] transition" required />
-              <textarea rows="4" name="message" placeholder="Message" value={formData.message} onChange={handleFormChange} className="w-full p-4 bg-[#111] border border-gray-800 rounded-lg focus:outline-none focus:border-[#D4A373] transition" required></textarea>
-              <button 
-                type="submit" 
+
+          {/* Form Card */}
+          <div className="glass-panel p-8 rounded-sm border-white/5">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name *"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-4 py-3.5 bg-black border border-white/10 rounded-sm text-sm focus:outline-none focus:border-[#E6C280] transition text-white"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address *"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-4 py-3.5 bg-black border border-white/10 rounded-sm text-sm focus:outline-none focus:border-[#E6C280] transition text-white"
+                required
+              />
+              <textarea
+                rows="4"
+                name="message"
+                placeholder="Your Message *"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                className="w-full px-4 py-3.5 bg-black border border-white/10 rounded-sm text-sm focus:outline-none focus:border-[#E6C280] transition text-white resize-none"
+                required
+              ></textarea>
+              
+              <button
+                type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-[#D4A373] text-black font-bold rounded-lg hover:bg-[#c49264] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-[#E6C280] text-black font-bold rounded-sm text-xs uppercase tracking-widest hover:bg-[#eed19d] transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>
         </div>
-        <div className="mt-20 text-center">
-          <div className="w-px h-16 bg-gray-800 mx-auto mb-8"></div>
-          <h3 className="text-2xl font-semibold mb-3">Join The Old School Club</h3>
-          <p className="text-gray-400 mb-6">Get exclusive offers and tea stories straight to your inbox.</p>
-          <form onSubmit={handleSubscribe} className="flex max-w-md mx-auto gap-3">
-            <input type="email" placeholder="Your email" value={subscribeEmail} onChange={(e) => setSubscribeEmail(e.target.value)} className="flex-1 p-3 bg-[#111] border border-gray-800 rounded-lg focus:outline-none focus:border-[#D4A373]" required />
-            <button type="submit" className="px-6 py-3 bg-[#D4A373] text-black rounded-lg font-semibold hover:bg-[#c49264] transition">Subscribe</button>
-          </form>
-        </div>
-      </section>
+      </div>
 
-      <footer className="py-16 border-t border-white/10 bg-[#0a0a0a]">
-        <div className="px-6 md:px-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-            <div><h4 className="font-bold text-xl mb-4 text-[#D4A373]">OLD SCHOOL TEA</h4><p className="text-gray-500 text-sm leading-relaxed">Authentic Kerala tea experience since 2025. Brewed with love, served with nostalgia.</p><div className="flex gap-4 mt-6"><span className="text-2xl cursor-pointer hover:text-[#D4A373] transition">📘</span><span className="text-2xl cursor-pointer hover:text-[#D4A373] transition">📸</span><span className="text-2xl cursor-pointer hover:text-[#D4A373] transition">🐦</span><span className="text-2xl cursor-pointer hover:text-[#D4A373] transition">🎵</span></div></div>
-            <div><h4 className="font-semibold text-lg mb-5 text-gray-300 border-b border-gray-800 pb-2 inline-block">Quick Links</h4><ul className="space-y-3 text-gray-400 text-sm mt-4"><li><button onClick={() => navigate("/about")} className="hover:text-[#D4A373] transition flex items-center gap-2"><span className="w-1 h-1 bg-[#D4A373] rounded-full"></span>About Us</button></li><li><button onClick={() => navigate("/teas")} className="hover:text-[#D4A373] transition flex items-center gap-2"><span className="w-1 h-1 bg-[#D4A373] rounded-full"></span>Our Teas</button></li><li><button onClick={() => navigate("/locations")} className="hover:text-[#D4A373] transition flex items-center gap-2"><span className="w-1 h-1 bg-[#D4A373] rounded-full"></span>Locations</button></li></ul></div>
-            <div><h4 className="font-semibold text-lg mb-5 text-gray-300 border-b border-gray-800 pb-2 inline-block">Get in Touch</h4><ul className="space-y-3 text-gray-400 text-sm mt-4"><li className="flex items-center gap-3"><span>📍</span> Kottapuram, Kodungallur, Kerala</li><li className="flex items-center gap-3"><span>📞</span> +91 98765 43210</li><li className="flex items-center gap-3"><span>✉️</span> oldschooletea@gmail.com</li><li className="flex items-center gap-3"><span>🕒</span> Mon-Sun: 8AM - 10PM</li></ul></div>
-          </div>
-          <div className="pt-8 mt-8 border-t border-white/10 text-center"><p className="text-gray-500 text-sm">© 2026 Old School Tea. All rights reserved. Crafted with ☕ in Kerala.</p><div className="flex justify-center gap-6 mt-4 text-xs text-gray-600"><button onClick={() => navigate("/about")} className="hover:text-[#D4A373] transition">About</button><button onClick={() => navigate("/contact")} className="hover:text-[#D4A373] transition">Contact</button></div></div>
-        </div>
+      <footer className="py-12 border-t border-white/5 bg-black/60 text-center">
+        <p className="text-gray-500 text-xs font-light tracking-wide">
+          &copy; {new Date().getFullYear()} Old School Tea &mdash; Contacts Desk
+        </p>
       </footer>
     </div>
-  )
+  );
 }
 
 /* ================= MENU PAGE ================= */
 function Menu() {
-  const navigate = useNavigate()
-  const [activeCategory, setActiveCategory] = useState("all")
-  const [selectedItem, setSelectedItem] = useState(null)
+  const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [scrollOpacity, setScrollOpacity] = useState(0);
 
-  const categories = ["all", "black tea", "masala chai", "herbal", "desserts", "specials"]
+  useEffect(() => {
+    AOS.init({ duration: 1200, once: false });
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = window.innerHeight;
+      const opacity = Math.min(scrollPosition / maxScroll, 0.95);
+      setScrollOpacity(opacity);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const categories = [
+    "all",
+    "black tea",
+    "masala chai",
+    "herbal",
+    "desserts",
+    "specials",
+  ];
+
   const menuItems = [
-    { name: "Assam Black Tea", price: "₹69", category: "black tea", desc: "Malty and bold with rich aroma", origin: "Assam", img: "https://images.unsplash.com/photo-1597481499750-3e6b8c110e7f", fullDesc: "A robust and full-bodied black tea from the Brahmaputra Valley." },
-    { name: "Darjeeling First Flush", price: "₹89", category: "black tea", desc: "Muscatel notes, light and floral", origin: "Darjeeling", img: "https://images.unsplash.com/photo-1597481499750-3e6b8c110e7f", fullDesc: "The champagne of teas! Delicate floral notes." },
-    { name: "Kadak Masala Chai", price: "₹79", category: "masala chai", desc: "Strong spice blend with ginger", origin: "Kerala", img: "https://images.unsplash.com/photo-1576092768241-ec7dfd6f98bb", fullDesc: "Powerful blend of Assam tea with cardamom, cloves, cinnamon." },
-    { name: "Tulsi Green Tea", price: "₹99", category: "herbal", desc: "Immunity booster with holy basil", origin: "Himalayan", img: "https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5", fullDesc: "Pure green tea with sacred Tulsi." },
-    { name: "Chocolate Brownie", price: "₹149", category: "desserts", desc: "Gooey & warm with walnut topping", origin: "In-house", img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c", fullDesc: "Double chocolate brownie with walnuts." },
-    { name: "Classic Sulaimani", price: "₹59", category: "black tea", desc: "Kerala specialty with lemon", origin: "Kodungallur", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c", fullDesc: "Our signature black tea with fresh lemon." }
-  ]
+    {
+      name: "Assam Black Tea",
+      price: "₹69",
+      category: "black tea",
+      desc: "Malty and bold with rich aroma",
+      origin: "Assam",
+      img: "https://images.pexels.com/photos/7473962/pexels-photo-7473962.jpeg",
+      fullDesc:
+        "A robust and full-bodied black tea from the Brahmaputra Valley. Known for its bright color and strong malty flavor, this is the perfect morning cup.",
+    },
+    {
+      name: "Darjeeling First Flush",
+      price: "₹89",
+      category: "black tea",
+      desc: "Muscatel notes, light and floral",
+      origin: "Darjeeling",
+      img: "https://images.pexels.com/photos/7303168/pexels-photo-7303168.jpeg",
+      fullDesc:
+        "The champagne of teas! Delicate floral notes with a light golden color. This first flush harvest captures the essence of spring in the Himalayas.",
+    },
+    {
+      name: "Kadak Masala Chai",
+      price: "₹79",
+      category: "masala chai",
+      desc: "Strong spice blend with ginger",
+      origin: "Kerala",
+      img: "https://images.pexels.com/photos/18030044/pexels-photo-18030044.jpeg",
+      fullDesc:
+        "Powerhouse blend of premium Assam tea with cardamom, cloves, cinnamon, and fresh organic hill ginger. A true Kerala favorite that warms the soul.",
+    },
+    {
+      name: "Tulsi Green Tea",
+      price: "₹99",
+      category: "herbal",
+      desc: "Immunity booster with holy basil",
+      origin: "Himalayan",
+      img: "https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5",
+      fullDesc:
+        "Pure high-summit green tea leaves steeped with freshly harvested sacred green Tulsi leaves. Rich in therapeutic wellness values.",
+    },
+    {
+      name: "Chocolate Brownie",
+      price: "₹149",
+      category: "desserts",
+      desc: "Gooey & warm with walnut topping",
+      origin: "In-house",
+      img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c",
+      fullDesc:
+        "Premium dark chocolate brownie loaded with crunchy walnuts. Served warm with a light dusting of organic cane sugar.",
+    },
+    {
+      name: "Classic Sulaimani",
+      price: "₹59",
+      category: "black tea",
+      desc: "Kerala specialty with lemon",
+      origin: "Kottapuram",
+      img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c",
+      fullDesc:
+        "Our signature single-batch black tea steeped with local cinnamon, cloves, and fresh lemon. Preserved generation recipe of Malabar.",
+    },
+    {
+      name: "Butter Puff",
+      price: "₹89",
+      category: "desserts",
+      desc: "Flaky puff pastry baked fresh in-house",
+      origin: "In-house",
+      img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a",
+      fullDesc:
+        "Perfect crispy layers of rich butter puff pastry. Prepared fresh in-house every morning. The ideal companion for hot milk tea.",
+    },
+    {
+      name: "Peppermint Tea",
+      desc: "Fresh peppermint leaves steeped to absolute cooling perfection",
+      price: "₹79",
+      category: "herbal",
+      origin: "Himalayan",
+      img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
+      fullDesc:
+        "Refreshing peppermint infusion crafted from fresh mountain mint leaves. Ideal for digestion and calming evening relaxation.",
+    },
+    {
+      name: "Kashmiri Kahwa",
+      price: "₹129",
+      category: "specials",
+      desc: "Saffron & almond infused royal green tea",
+      origin: "Kashmir",
+      img: "https://images.unsplash.com/photo-1598866594230-a7c12756260f",
+      fullDesc:
+        "Traditional royal Kashmiri green tea leaves slow-steeped with exotic saffron strands, slivered almond flakes, and cardamom. Served with organic honey.",
+    },
+  ];
 
-  const filtered = activeCategory === "all" ? menuItems : menuItems.filter(i => i.category === activeCategory)
+  const filtered =
+    activeCategory === "all"
+      ? menuItems
+      : menuItems.filter((i) => i.category === activeCategory);
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      {selectedItem && (<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4" onClick={() => setSelectedItem(null)}><div className="bg-[#111] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#D4A373]/30" onClick={(e) => e.stopPropagation()}><img src={selectedItem.img} alt={selectedItem.name} className="w-full h-64 object-cover rounded-t-2xl" /><div className="p-6"><div className="flex justify-between items-start mb-4"><div><h3 className="text-2xl font-bold text-[#D4A373]">{selectedItem.name}</h3><p className="text-gray-400 text-sm mt-1">{selectedItem.origin}</p></div><span className="text-3xl font-bold text-[#D4A373]">{selectedItem.price}</span></div><p className="text-gray-300 leading-relaxed mb-4">{selectedItem.fullDesc}</p><p className="text-gray-400 text-sm mb-6">{selectedItem.desc}</p><button onClick={() => setSelectedItem(null)} className="w-full px-6 py-2 bg-[#D4A373] text-black rounded-lg font-semibold">Close</button></div></div></div>)}
-      <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-md p-4 flex justify-between items-center px-6 md:px-20 border-b border-gray-800"><button onClick={() => navigate("/")} className="border border-[#D4A373] px-4 py-2 text-[#D4A373] hover:bg-[#D4A373] hover:text-black transition rounded-lg text-sm">← HOME</button><h1 className="text-2xl font-bold tracking-wide"><span className="text-[#D4A373]">MENU</span></h1><div className="w-20"></div></div>
-      <div className="relative h-[40vh] flex items-center justify-center text-center bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=2942&auto=format')" }}><div className="absolute inset-0 bg-black/60"></div><div className="relative z-10"><h1 className="text-4xl md:text-6xl font-bold mb-4">Our <span className="text-[#D4A373]">Collection</span></h1><p className="text-gray-300 max-w-2xl mx-auto px-4">Carefully curated teas and treats from around the world</p></div></div>
-      <div className="px-6 md:px-20 py-8"><div className="flex flex-wrap justify-center gap-3 mb-12">{categories.map(cat => (<button key={cat} onClick={() => setActiveCategory(cat)} className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat ? "bg-[#D4A373] text-black" : "border border-gray-700 hover:border-[#D4A373] hover:text-[#D4A373]"}`}>{cat.toUpperCase()}</button>))}</div><div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">{filtered.map((item, idx) => (<div key={idx} onClick={() => setSelectedItem(item)} className="group bg-[#111] rounded-2xl overflow-hidden border border-gray-800 hover:border-[#D4A373] transition-all duration-300 cursor-pointer hover:transform hover:-translate-y-2"><div className="relative h-56 overflow-hidden"><img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" /><div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div><div className="absolute top-4 right-4"><span className="px-3 py-1 bg-[#D4A373]/90 text-black text-xs rounded-full font-semibold">{item.category.toUpperCase()}</span></div></div><div className="p-5"><div className="flex justify-between items-start mb-2"><h3 className="text-xl font-bold group-hover:text-[#D4A373] transition">{item.name}</h3><span className="text-[#D4A373] font-bold text-lg">{item.price}</span></div><p className="text-gray-400 text-sm mb-2">{item.desc}</p><p className="text-gray-500 text-xs flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-[#D4A373]"></span>{item.origin}</p><button className="mt-4 w-full py-2 border border-gray-700 rounded-lg text-sm hover:bg-[#D4A373] hover:text-black hover:border-[#D4A373] transition">View Details</button></div></div>))}</div></div>
+    <div className="bg-[#061a16] text-white min-h-screen relative">
+      
+      {/* Sticky Sub Header */}
+      <div className="sticky top-0 z-30 bg-[#061a16]/95 border-b border-white/5 p-4 flex justify-between items-center px-6 md:px-12 backdrop-blur-xl">
+        <button
+          onClick={() => navigate("/")}
+          className="luxury-btn luxury-btn-outline px-4 py-2 rounded-sm text-xs"
+        >
+          ← Home
+        </button>
+        <span className="font-bold tracking-[0.25em] text-sm text-[#E6C280]">THE MENU</span>
+        <div className="w-20 hidden md:block"></div>
+      </div>
+
+      {/* Item Drawer overlay */}
+      {selectedItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+          onClick={() => setSelectedItem(null)}
+        >
+          <div
+            className="bg-[#0a0a0a] rounded-sm border border-white/10 max-w-lg w-full overflow-hidden shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="aspect-[16/10] overflow-hidden relative">
+              <img
+                src={selectedItem.img}
+                alt={selectedItem.name}
+                className="w-full h-full object-cover brightness-[0.8]"
+              />
+              <span className="absolute bottom-4 left-4 text-xl font-bold bg-black/85 text-[#E6C280] px-3.5 py-1 border border-[#E6C280]/20 rounded-sm">
+                {selectedItem.price}
+              </span>
+            </div>
+            
+            <div className="p-8 space-y-6">
+              <div>
+                <span className="text-[0.6rem] text-gray-500 tracking-widest uppercase block mb-1">
+                  Origin: {selectedItem.origin}
+                </span>
+                <h3 className="text-2xl font-bold text-white tracking-wide">
+                  {selectedItem.name}
+                </h3>
+              </div>
+              <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
+                {selectedItem.fullDesc}
+              </p>
+              <div className="flex gap-4 pt-2">
+                <button
+                  onClick={() => setSelectedItem(null)}
+                  className="w-full luxury-btn luxury-btn-solid py-3 rounded-sm font-bold text-xs"
+                >
+                  Close Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header Banner */}
+      <section className="relative py-24 bg-black text-center overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover scale-[1.03] opacity-35"
+        >
+          <source src="/videos/menue.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-[#061a16] z-10" />
+
+        <div className="relative z-20 max-w-2xl mx-auto px-6 space-y-4">
+          <p className="text-[#E6C280] text-[0.65rem] tracking-[0.3em] uppercase font-bold">
+            Fine Teas & Treats
+          </p>
+          <h1 className="text-4xl md:text-7xl font-bold leading-tight">
+            Our Custom <span className="text-gold-gradient font-serif italic font-normal">Menu</span>
+          </h1>
+          <p className="text-gray-300 text-sm md:text-base font-light">
+            Indulge in our carefully selected single-estate loose leaves, robust spiced milk tea, and fresh in-house morning treats.
+          </p>
+        </div>
+      </section>
+
+      {/* Category filters bar */}
+      <div className="sticky top-[68px] z-20 py-4 px-6 bg-[#061a16]/90 border-b border-white/5 flex overflow-x-auto justify-start md:justify-center gap-3 backdrop-blur-xl">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-5 py-2.5 text-[0.65rem] font-semibold tracking-wider rounded-sm uppercase shrink-0 transition-all ${
+              activeCategory === cat
+                ? "bg-[#E6C280] text-black font-bold shadow-lg"
+                : "border border-white/5 hover:border-[#E6C280]/30 hover:text-[#E6C280] bg-black/40"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Items Showcase */}
+      <div className="max-w-6xl mx-auto px-6 md:px-12 py-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filtered.map((item, idx) => (
+            <div
+              key={idx}
+              onClick={() => setSelectedItem(item)}
+              className="glass-card rounded-sm overflow-hidden border-white/5 flex flex-col justify-between cursor-pointer group"
+            >
+              <div className="relative aspect-[16/11] overflow-hidden">
+                <img
+                  src={item.img}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 brightness-[0.8]"
+                />
+                <span className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[#E6C280] border border-[#E6C280]/15 text-[0.55rem] tracking-wider uppercase font-bold rounded-sm">
+                  {item.category}
+                </span>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="flex justify-between items-baseline">
+                  <h3 className="text-lg font-bold text-white tracking-wide group-hover:text-[#E6C280] transition">
+                    {item.name}
+                  </h3>
+                  <span className="text-[#E6C280] font-bold text-sm md:text-base">
+                    {item.price}
+                  </span>
+                </div>
+                <p className="text-gray-400 text-xs md:text-sm font-light leading-relaxed">
+                  {item.desc}
+                </p>
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-[0.6rem] text-gray-500 uppercase tracking-widest">
+                    {item.origin}
+                  </span>
+                  <span className="text-[0.65rem] text-[#E6C280] uppercase tracking-widest font-semibold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Info
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Empty placeholder state */}
+        {filtered.length === 0 && (
+          <div className="text-center py-24">
+            <p className="text-gray-500 font-light">No items found under this category.</p>
+          </div>
+        )}
+      </div>
+
+      <footer className="py-12 border-t border-white/5 bg-black/60 text-center">
+        <p className="text-gray-500 text-xs font-light tracking-wide">
+          &copy; {new Date().getFullYear()} Old School Tea &mdash; Menu Desk
+        </p>
+      </footer>
     </div>
-  )
+  );
 }
 
-/* ================= EXPLORE PAGE - UPDATED ================= */
+/* ================= EXPLORE PAGE ================= */
 function Explore() {
-  const navigate = useNavigate()
-  const [activeStory, setActiveStory] = useState(0)
-  
-  useEffect(() => { 
-    AOS.init({ duration: 1400, once: true }) 
-  }, [])
+  const navigate = useNavigate();
+  const [activeStory, setActiveStory] = useState(0);
+
+  useEffect(() => {
+    AOS.init({ duration: 1200, once: true });
+  }, []);
 
   const brewingSteps = [
-    { step: "01", title: "Sourcing the Finest Leaves", desc: "We handpick tea leaves from the pristine Western Ghats estates, ensuring only the highest quality reaches your cup.", icon: "🌱", duration: "3-5 days" },
-    { step: "02", title: "Traditional Drying", desc: "Leaves are naturally dried using age-old techniques that preserve the authentic aroma and flavor compounds.", icon: "☀️", duration: "24 hours" },
-    { step: "03", title: "Clay Pot Brewing", desc: "Our signature clay pots enhance the tea's natural flavors while adding a subtle earthy undertone.", icon: "🏺", duration: "10-15 mins" },
-    { step: "04", title: "Perfect Pouring", desc: "The final step - pouring at the exact temperature to unlock the full potential of every leaf.", icon: "🍵", duration: "2 mins" }
-  ]
+    {
+      step: "01",
+      title: "Direct Summit Sourcing",
+      desc: "We source single-estate leaves and coffee beans from organic hill plantations high up in the Western Ghats, securing only high-grade premium crops.",
+      icon: "🌱",
+      duration: "Direct Sourcing",
+    },
+    {
+      step: "02",
+      title: "Wood-Fired Simmering",
+      desc: "Brewed carefully on classic red-brick stove fire, imparting a subtle woodsmoke aroma that defines our coffee and tea roast profile.",
+      icon: "🔥",
+      duration: "Artisan Simmering",
+    },
+    {
+      step: "03",
+      title: "Earthen Clay Infusion",
+      desc: "Our clay pots breathe natural trace minerals back into the brewing water, softening spices and adding an exquisite earthy signature taste.",
+      icon: "🏺",
+      duration: "Clay Pot Infusion",
+    },
+    {
+      step: "04",
+      title: "Traditional Pull & Stretch",
+      desc: "Stretched and poured from heights to cool the hot brew naturally, resulting in a rich, frothy luxury texture in traditional glasses.",
+      icon: "🍵",
+      duration: "The Signature Finish",
+    },
+  ];
 
-  const teaStories = [
+  const stories = [
     {
-      title: "The Legacy of Sulaimani",
-      content: "Sulaimani tea traces its roots to the Middle Eastern traders who brought their tea culture to Kerala's Malabar coast. Our recipe has been preserved for over 100 years, passed down through four generations of master brewers. The name 'Sulaimani' honors King Solomon, symbolizing wisdom and tradition.",
+      title: "The Lore of Malabar Brews",
+      content:
+        "The historic Sulaimani and spiced coffee trace their roots to Arab spice traders sailing along the Malabar Coast of Kerala. Embracing local ginger, cardamom, and clove infusions, they crafted therapeutic warm digestifs. Our family recipes, preserved for decades, use single-estate Nilgiri dust and dark roasted hill beans, sweetened with organic raw cane sugar.",
       image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c",
-      author: "Master Brewer - Krishnan Nair",
-      date: "Tale from 1920s"
+      author: "Preserver - Krishnan Nair",
+      date: "Malabar Shore Tales",
     },
     {
-      title: "The Art of Clay Pot Brewing",
-      content: "Clay pots have been used in Kerala for centuries to brew tea. The porous nature of clay allows the tea to breathe, enhancing its flavor profile while adding a subtle earthy undertone. Our traditional clay pots are handcrafted by local artisans using methods passed down through generations.",
+      title: "Red-Brick Claypot Chemistry",
+      content:
+        "True coffee and tea brewing is a chemical dance. Boiling in organic clay pots allows the ingredients to expand uniformly. The porous structure of earthenware naturally filters coarse tannins, softening cardamom spices and preserving the rich malty notes of premium dark roasts without astringency.",
       image: "https://images.unsplash.com/photo-1576092768241-ec7dfd6f98bb",
-      author: "Traditional Craftsman",
-      date: "Ancient Technique"
+      author: "Master Brewer - Chacko Master",
+      date: "Earthenware Standard",
     },
     {
-      title: "The Western Ghats Tea Estates",
-      content: "Nestled in the misty hills of the Western Ghats, our tea estates span over 500 acres of pristine terrain. The unique climate, with its cool temperatures and high rainfall, creates the perfect conditions for growing premium tea leaves. Each leaf is handpicked by skilled workers who have been doing this for generations.",
-      image: "https://images.unsplash.com/photo-1515823662972-da6a2e4d3002",
-      author: "Estate Manager",
-      date: "Since 1950s"
-    },
-    {
-      title: "The Evening Tea Ritual",
-      content: "In Kerala, evening tea is more than just a beverage - it's a sacred ritual that brings families together. The 'Chaya' (tea) break is a time to pause, reflect, and connect with loved ones. Our tearoom preserves this tradition, offering a warm, nostalgic atmosphere where every cup tells a story.",
+      title: "The Riverside 'Chaya' Ritual",
+      content:
+        "In Kerala, evening Chaya is a sacred collective pause. In the cooling river breeze of Kottapuram, friends gather under warm amber lights. We designed our teahouse to honor this local ritual: an organic, elegant space filled with light laughter, deep river views, and hot glasses of wood-fired memories.",
       image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
       author: "Cultural Historian",
-      date: "Living Tradition"
-    }
-  ]
+      date: "Kottapuram Riverside",
+    },
+  ];
 
-  const teaFacts = [
-    { fact: "Kerala produces over 50 million kg of tea annually", icon: "📊" },
-    { fact: "Clay pot brewing dates back over 5000 years", icon: "🏺" },
-    { fact: "Our Sulaimani recipe is over 100 years old", icon: "📜" },
-    { fact: "First flush teas are harvested in spring", icon: "🌸" }
-  ]
-
-  const upcomingEvents = [
-    { name: "Tea Tasting Workshop", date: "Every Saturday", time: "4:00 PM - 6:00 PM", price: "₹499", seats: "Limited (15 seats)" },
-    { name: "Sulaimani Masterclass", date: "First Sunday of Month", time: "10:00 AM - 12:00 PM", price: "₹799", seats: "10 seats only" },
-    { name: "Evening Tea Ritual", date: "Daily", time: "5:30 PM - 7:30 PM", price: "₹299", seats: "Walk-in" }
-  ]
+  const scientificFacts = [
+    { fact: "Clay pot brewing naturally balances the pH level of acidic roasted coffee and spiced tea blends.", icon: "🏺" },
+    { fact: "Traditional wood fire generates a mild, uniform thermal convection that preserves organic antioxidants.", icon: "🔥" },
+    { fact: "Our signature spices are sourced from local family farms in the Western Ghats to ensure pure therapeutic value.", icon: "📜" },
+  ];
 
   const galleryImages = [
     "https://images.unsplash.com/photo-1576092768241-ec7dfd6f98bb",
     "https://images.unsplash.com/photo-1517701604599-bb29b565090c",
     "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
-    "https://images.unsplash.com/photo-1571934811356-5cc061b6821f"
-  ]
+    "https://images.unsplash.com/photo-1571934811356-5cc061b6821f",
+  ];
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      {/* Header with Back Button */}
-      <div className="p-6">
-        <button onClick={() => navigate("/")} className="border border-[#D4A373] px-5 py-2 text-[#D4A373] rounded-lg hover:bg-[#D4A373] hover:text-black transition flex items-center gap-2">
-          ← BACK HOME
+    <div className="bg-[#061a16] text-white min-h-screen relative overflow-hidden">
+      {/* Visual Ambient Glows */}
+      <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-[#E6C280]/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-[#5ca2a8]/3 rounded-full blur-[150px] pointer-events-none" />
+
+      {/* Sub Header */}
+      <div className="p-6 sticky top-0 bg-[#061a16]/85 backdrop-blur-xl border-b border-white/5 z-30 flex justify-between items-center">
+        <button
+          onClick={() => navigate("/")}
+          className="luxury-btn luxury-btn-outline px-5 py-2 flex items-center gap-2 rounded-sm text-xs"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back Home
         </button>
+        <span className="font-bold tracking-[0.25em] text-sm text-[#E6C280]">THE RITUAL</span>
+        <div className="w-20 hidden md:block"></div>
       </div>
 
-      {/* Hero Section with Video Background - Full screen like home page */}
-      <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
-        {/* Video Background */}
-        <video 
-          autoPlay 
-          muted 
-          loop 
-          playsInline 
-          className="absolute inset-0 w-full h-full object-cover"
+      {/* 1. Hero Banner Section */}
+      <section className="relative py-32 bg-black text-center overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover scale-[1.03] opacity-30"
         >
           <source src="/videos/herovideo.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/70"></div>
-        <div className="relative z-10 max-w-5xl mx-auto px-4" data-aos="fade-up">
-          <RotatingCup />
-          <h1 className="text-4xl md:text-[120px] font-semibold">
-            Step Into <span className="text-[#D4A373]">The Ritual</span>
-          </h1>
-          <p className="mt-5 text-gray-300 max-w-xl mx-auto text-lg">
-            Discover the art, tradition, and soul behind every cup of Old School Tea.
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/45 to-[#061a16] z-10" />
+
+        <div className="relative z-20 max-w-3xl mx-auto px-6 space-y-4">
+          <p className="text-[#E6C280] text-[0.65rem] tracking-[0.3em] uppercase font-bold">
+            The Artisan Experience
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
-            <button 
-              onClick={() => document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-6 py-3 border border-[#D4A373] text-[#D4A373] hover:bg-[#D4A373] hover:text-black transition flex items-center gap-2"
-            >
-              Explore the Process →
-            </button>
-            <button 
-              onClick={() => document.getElementById('stories')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-6 py-3 bg-[#D4A373] text-black hover:bg-[#c49264] transition font-semibold"
-            >
-              Read Our Stories
-            </button>
-          </div>
-        </div>
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer" onClick={() => document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' })}>
-          <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-            <div className="w-1 h-2 bg-white rounded-full mt-2 animate-pulse"></div>
-          </div>
+          <h1 className="text-4xl md:text-7xl font-bold leading-tight">
+            Step Into <span className="text-gold-gradient font-serif italic font-normal">The Ritual</span>
+          </h1>
+          <p className="text-gray-300 text-sm md:text-base font-light leading-relaxed max-w-lg mx-auto">
+            Discover the heritage, chemical details, and detailed craft steps that shape every warm, wood-fired cup at Old School Tea.
+          </p>
         </div>
       </section>
 
-      {/* Brewing Process Section */}
-      <section id="process" className="py-24 px-6 md:px-20 bg-[#0a0a0a]">
-        <div className="text-center mb-16" data-aos="fade-up">
-          <p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">The Art of Tea</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Brewing <span className="text-[#D4A373]">Process</span></h2>
-          <div className="w-20 h-1 bg-[#D4A373] mx-auto"></div>
-          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">Every cup is a masterpiece crafted with precision and passion</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {brewingSteps.map((step, idx) => (
-            <div key={idx} className="bg-[#111] rounded-2xl p-6 border border-gray-800 hover:border-[#D4A373] transition-all duration-300 hover:transform hover:-translate-y-2 group" data-aos="fade-up" data-aos-delay={idx*100}>
-              <div className="text-5xl mb-4">{step.icon}</div>
-              <div className="text-3xl font-bold text-[#D4A373] mb-2">{step.step}</div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-[#D4A373] transition">{step.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-3">{step.desc}</p>
-              <p className="text-xs text-[#D4A373]">⏱ {step.duration}</p>
+      {/* 2. Heritage Tales Section (Moved Up for Immediate Engagement) */}
+      <section className="relative py-24 border-b border-white/5">
+        <div className="max-w-6xl mx-auto px-6 md:px-12 space-y-16">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <div className="flex items-center justify-center gap-2">
+              <span className="w-6 h-px bg-[#E6C280]" />
+              <span className="text-[#E6C280] text-[0.7rem] font-semibold tracking-[0.3em] uppercase">
+                Heritage Lore
+              </span>
+              <span className="w-6 h-px bg-[#E6C280]" />
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Tea Stories Section - Replaced Video Section */}
-      <section id="stories" className="py-24 px-6 md:px-20">
-        <div className="text-center mb-16" data-aos="fade-up">
-          <p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">Stories & Traditions</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Experience the <span className="text-[#D4A373]">Magic</span></h2>
-          <div className="w-20 h-1 bg-[#D4A373] mx-auto"></div>
-          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">Discover the rich heritage and stories behind every cup of tea</p>
-        </div>
-
-        {/* Story Navigation Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {teaStories.map((story, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveStory(idx)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                activeStory === idx 
-                  ? "bg-[#D4A373] text-black" 
-                  : "border border-gray-700 hover:border-[#D4A373] hover:text-[#D4A373]"
-              }`}
-            >
-              {story.title}
-            </button>
-          ))}
-        </div>
-
-        {/* Active Story Display */}
-        <div className="max-w-5xl mx-auto">
-          {teaStories.map((story, idx) => (
-            <div
-              key={idx}
-              className={`transition-all duration-700 ${
-                activeStory === idx ? "block" : "hidden"
-              }`}
-              data-aos="fade-up"
-            >
-              <div className="grid md:grid-cols-2 gap-10 items-center bg-[#111] rounded-2xl overflow-hidden border border-gray-800">
-                <div className="h-[400px] overflow-hidden">
-                  <img 
-                    src={story.image} 
-                    alt={story.title}
-                    className="w-full h-full object-cover hover:scale-110 transition duration-700"
-                  />
-                </div>
-                <div className="p-8">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-3xl">📖</span>
-                    <span className="text-[#D4A373] text-sm uppercase tracking-wider">Story</span>
-                  </div>
-                  <h3 className="text-3xl font-bold mb-4 text-[#D4A373]">{story.title}</h3>
-                  <p className="text-gray-300 leading-relaxed mb-6">{story.content}</p>
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-800">
-                    <div>
-                      <p className="text-[#D4A373] font-semibold">{story.author}</p>
-                      <p className="text-gray-500 text-sm">{story.date}</p>
-                    </div>
-                    <button className="text-[#D4A373] hover:text-white transition flex items-center gap-1">
-                      Read Full Story <span>→</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Story Navigation Dots */}
-        <div className="flex justify-center gap-2 mt-8">
-          {teaStories.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveStory(idx)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                activeStory === idx ? "w-8 bg-[#D4A373]" : "bg-gray-600"
-              }`}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Tea Facts Section */}
-      <section className="py-24 px-6 md:px-20 bg-[#0a0a0a]">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div data-aos="fade-right">
-            <img 
-              src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002" 
-              className="rounded-2xl w-full h-[400px] object-cover shadow-2xl" 
-              alt="Tea plantation"
-            />
+            <h2 className="text-3xl md:text-5xl font-semibold text-white">
+              Tales of Spices & <span className="text-gold-gradient font-serif italic font-normal">Sands</span>
+            </h2>
           </div>
-          <div data-aos="fade-left">
-            <p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">Did You Know?</p>
-            <h2 className="text-4xl font-bold mb-6">Interesting <span className="text-[#D4A373]">Tea Facts</span></h2>
-            <div className="space-y-4">
-              {teaFacts.map((fact, idx) => (
-                <div key={idx} className="flex items-start gap-4 p-4 bg-[#111] rounded-xl border border-gray-800">
-                  <span className="text-3xl">{fact.icon}</span>
-                  <p className="text-gray-300">{fact.fact}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 p-4 bg-[#D4A373]/10 rounded-xl border border-[#D4A373]/30">
-              <p className="text-[#D4A373] font-semibold mb-2">✨ Special Note</p>
-              <p className="text-gray-300 text-sm">Our signature Sulaimani recipe has been passed down for 4 generations, carefully preserved and perfected over 100 years.</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Events Section */}
-      <section id="events" className="py-24 px-6 md:px-20">
-        <div className="text-center mb-16" data-aos="fade-up">
-          <p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">Join Us</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Upcoming <span className="text-[#D4A373]">Events</span></h2>
-          <div className="w-20 h-1 bg-[#D4A373] mx-auto"></div>
-          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">Immerse yourself in the world of tea with our exclusive experiences</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {upcomingEvents.map((event, idx) => (
-            <div key={idx} className="bg-gradient-to-br from-[#111] to-[#1a1a1a] rounded-2xl p-6 border border-gray-800 hover:border-[#D4A373] transition-all duration-300 hover:transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay={idx*100}>
-              <div className="text-4xl mb-4">📅</div>
-              <h3 className="text-xl font-bold mb-2 group-hover:text-[#D4A373] transition">{event.name}</h3>
-              <p className="text-gray-400 text-sm mb-2">📆 {event.date}</p>
-              <p className="text-gray-400 text-sm mb-2">⏰ {event.time}</p>
-              <p className="text-[#D4A373] font-bold text-lg mb-2">{event.price}</p>
-              <p className="text-gray-500 text-xs mb-4">👥 {event.seats}</p>
-              <button className="w-full py-2 border border-[#D4A373] text-[#D4A373] rounded-lg hover:bg-[#D4A373] hover:text-black transition text-sm font-semibold">
-                Reserve Your Spot →
+          {/* Stories tabs */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {stories.map((story, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveStory(idx)}
+                className={`px-5 py-2.5 text-[0.65rem] font-semibold tracking-wider uppercase rounded-sm transition-all ${
+                  activeStory === idx
+                    ? "bg-[#E6C280] text-black font-bold shadow-lg"
+                    : "border border-white/5 hover:border-[#E6C280]/30 hover:text-[#E6C280] bg-black/40"
+                }`}
+              >
+                {story.title}
               </button>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
 
-      {/* Photo Gallery Section */}
-      <section className="py-24 px-6 md:px-20 bg-[#0a0a0a]">
-        <div className="text-center mb-16" data-aos="fade-up">
-          <p className="text-[#D4A373] uppercase tracking-[5px] text-sm mb-3">Moments Captured</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Photo <span className="text-[#D4A373]">Gallery</span></h2>
-          <div className="w-20 h-1 bg-[#D4A373] mx-auto"></div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {galleryImages.map((img, idx) => (
-            <div key={idx} className="group relative overflow-hidden rounded-2xl cursor-pointer" data-aos="zoom-in" data-aos-delay={idx*100}>
-              <img src={img} className="w-full h-64 object-cover group-hover:scale-110 transition duration-500" alt={`Gallery ${idx + 1}`} />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                <span className="text-white text-3xl">🔍</span>
+          {/* Active Story Card */}
+          <div className="glass-panel rounded-sm border-white/5 overflow-hidden shadow-2xl flex flex-col" data-aos="fade-up">
+            {/* Top Text Content */}
+            <div className="p-8 md:p-12 space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-[#E6C280]">
+                  <BookOpen className="w-4 h-4" />
+                  <span className="text-[0.65rem] font-bold tracking-widest uppercase">
+                    Chapters of Old
+                  </span>
+                </div>
+                <h3 className="text-2xl md:text-4xl font-bold text-white tracking-wide">
+                  {stories[activeStory].title}
+                </h3>
+                <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
+                  {stories[activeStory].content}
+                </p>
+              </div>
+              <div className="pt-6 border-t border-white/5 flex justify-between items-center">
+                <div>
+                  <p className="text-white font-bold text-sm">{stories[activeStory].author}</p>
+                  <p className="text-gray-500 text-[0.65rem] tracking-wider uppercase mt-0.5 font-semibold">
+                    {stories[activeStory].date}
+                  </p>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Call to Action */}
-      <section className="py-24 px-6 md:px-20 text-center bg-gradient-to-r from-[#D4A373]/10 to-transparent">
-        <div data-aos="fade-up">
-          <h2 className="text-4xl font-bold mb-4">Ready to Experience <span className="text-[#D4A373]">Old School Tea</span>?</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto mb-8">Come visit us and taste the tradition that has been perfected over generations.</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button onClick={() => navigate("/menu")} className="px-8 py-3 bg-[#D4A373] text-black rounded-full font-semibold hover:bg-[#c49264] transition">
-              View Our Menu
-            </button>
-            <button onClick={() => navigate("/locations")} className="px-8 py-3 border border-[#D4A373] text-[#D4A373] rounded-full hover:bg-[#D4A373] hover:text-black transition">
-              Find a Location
-            </button>
+            {/* Bottom Image Banner (Fully Visible & Proportionate) */}
+            <div className="w-full overflow-hidden relative border-t border-white/5 bg-black/40 flex items-center justify-center">
+              <img
+                src={stories[activeStory].image}
+                className="w-full h-auto max-h-[500px] object-contain block mx-auto brightness-[0.82] hover:scale-101 transition duration-75"
+                alt={stories[activeStory].title}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
+            </div>
           </div>
         </div>
       </section>
+
+      {/* 3. Scientific Insights (Facts - Placed Third) */}
+      <section className="relative py-24 bg-black/40 border-b border-white/5">
+        <div className="max-w-6xl mx-auto px-6 md:px-12">
+          <div className="grid lg:grid-cols-12 gap-16 items-center">
+            
+            {/* Text and Cards (Left 6 Cols) */}
+            <div className="lg:col-span-6 space-y-6" data-aos="fade-right">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-px bg-[#E6C280]" />
+                <span className="text-[#E6C280] text-[0.7rem] font-semibold tracking-[0.3em] uppercase">
+                  Scientific Insights
+                </span>
+              </div>
+              
+              <h2 className="text-3xl md:text-5xl font-semibold text-white leading-tight">
+                The Chemistry of <br />
+                <span className="text-gold-gradient font-serif italic font-normal">Artisan Simmering</span>
+              </h2>
+              
+              <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed">
+                Every detail of our preparation has a biological purpose. Wood fire maintains key nutrients, while our custom porous clay balances beverage acidity.
+              </p>
+              
+              <div className="space-y-4 pt-4">
+                {scientificFacts.map((fact, idx) => (
+                  <div key={idx} className="glass-card p-5 rounded-sm border-white/5 flex items-start gap-4 hover:border-[#E6C280]/20">
+                    <span className="text-3xl shrink-0">{fact.icon}</span>
+                    <p className="text-gray-300 text-xs md:text-sm font-light leading-relaxed">{fact.fact}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Image (Right 6 Cols) */}
+            <div className="lg:col-span-6 relative" data-aos="fade-left">
+              <div className="luxury-zoom-container relative aspect-[4/3] shadow-2xl rounded-sm">
+                <img
+                  src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002"
+                  className="luxury-zoom-image w-full h-full object-cover brightness-[0.8]"
+                  alt="Western Ghats plantations"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-36 h-36 bg-[#E6C280]/5 rounded-full blur-3xl pointer-events-none" />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Our Craft Process (Staggered Timeline Layout - Placed Fourth) */}
+      <section className="relative py-24 bg-[#070707] border-b border-white/5">
+        <div className="max-w-6xl mx-auto px-6 md:px-12">
+          
+          <div className="text-center max-w-2xl mx-auto mb-20">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="w-6 h-px bg-[#E6C280]" />
+              <span className="text-[#E6C280] text-[0.7rem] font-semibold tracking-[0.3em] uppercase">
+                The Timeline
+              </span>
+              <span className="w-6 h-px bg-[#E6C280]" />
+            </div>
+            <h2 className="text-3xl md:text-5xl font-semibold text-white">
+              The Wood-Fired <span className="text-gold-gradient font-serif italic font-normal">Claypot Steps</span>
+            </h2>
+          </div>
+
+          {/* Connected Staggered Steps */}
+          <div className="relative space-y-16 lg:space-y-0 lg:grid lg:grid-cols-4 lg:gap-6 pt-6">
+            {brewingSteps.map((step, idx) => (
+              <div
+                key={idx}
+                className="relative glass-card p-6 rounded-sm border-white/5 flex flex-col justify-between min-h-[280px] hover:border-[#E6C280]/30 transition-all duration-500"
+                data-aos="fade-up"
+                data-aos-delay={idx * 100}
+              >
+                <div>
+                  {/* Step Number Badge */}
+                  <div className="flex justify-between items-baseline mb-6">
+                    <span className="text-3xl md:text-4xl">{step.icon}</span>
+                    <span className="text-xs font-bold tracking-widest text-[#E6C280]">
+                      STEP {step.step}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg md:text-xl font-bold text-white mb-2">
+                    {step.title}
+                  </h3>
+                  
+                  <p className="text-gray-400 text-xs md:text-sm font-light leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+
+                <div className="pt-6 border-t border-white/5 mt-6 flex justify-between items-center text-[0.6rem] uppercase tracking-wider font-semibold text-gray-500">
+                  <span>Method</span>
+                  <span className="text-[#E6C280]">{step.duration}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 5. Captured Moments (Asymmetric Editorial Gallery - Placed Fifth) */}
+      <section className="relative py-24 bg-black">
+        <div className="max-w-6xl mx-auto px-6 md:px-12 space-y-16">
+          
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <div className="flex items-center justify-center gap-2">
+              <span className="w-6 h-px bg-[#E6C280]" />
+              <span className="text-[#E6C280] text-[0.7rem] font-semibold tracking-[0.3em] uppercase">
+                Photo Gallery
+              </span>
+              <span className="w-6 h-px bg-[#E6C280]" />
+            </div>
+            <h2 className="text-3xl md:text-5xl font-semibold text-white">
+               Riverside <span className="text-gold-gradient font-serif italic font-normal">Moments</span>
+            </h2>
+          </div>
+          
+          {/* Asymmetric Editorial Gallery Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-stretch">
+            {/* Image 1 (Large - 7 Columns) */}
+            <div className="sm:col-span-7 luxury-zoom-container relative aspect-[16/10] sm:aspect-auto sm:h-[400px] shadow-xl rounded-sm border-white/5 overflow-hidden" data-aos="zoom-in">
+              <img 
+                src={galleryImages[0]}
+                className="luxury-zoom-image w-full h-full object-cover brightness-[0.78]"
+                alt="Wood-Fired claypot simmering"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            </div>
+
+            {/* Image 2 (Medium aspect - 5 Columns) */}
+            <div className="sm:col-span-5 luxury-zoom-container relative aspect-[16/10] sm:aspect-auto sm:h-[400px] shadow-xl rounded-sm border-white/5 overflow-hidden" data-aos="zoom-in" data-aos-delay="100">
+              <img
+                src={galleryImages[1]}
+                className="luxury-zoom-image w-full h-full object-cover brightness-[0.78]"
+                alt="Sulaimani traditional tea glass"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            </div>
+
+            {/* Image 3 (Small aspect - 5 Columns) */}
+            <div className="sm:col-span-5 luxury-zoom-container relative aspect-[16/10] sm:aspect-auto sm:h-[320px] shadow-xl rounded-sm border-white/5 overflow-hidden" data-aos="zoom-in" data-aos-delay="200">
+              <img
+                src={galleryImages[2]}
+                className="luxury-zoom-image w-full h-full object-cover brightness-[0.78]"
+                alt="Steeped spices chaya session"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            </div>
+
+            {/* Image 4 (Large aspect - 7 Columns) */}
+            <div className="sm:col-span-7 luxury-zoom-container relative aspect-[16/10] sm:aspect-auto sm:h-[320px] shadow-xl rounded-sm border-white/5 overflow-hidden" data-aos="zoom-in" data-aos-delay="300">
+              <img
+                src={galleryImages[3]}
+                className="luxury-zoom-image w-full h-full object-cover brightness-[0.78]"
+                alt="Signature Ginger warm spice tea"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Minimal Footer */}
+      <footer className="py-12 border-t border-white/5 bg-[#061a16] text-center">
+        <p className="text-gray-500 text-xs font-light tracking-wide">
+          &copy; {new Date().getFullYear()} Old School Tea &mdash; Ritual Desk
+        </p>
+      </footer>
     </div>
-  )
+  );
 }
 
-/* ================= CONTACT PAGE ================= */
-function ContactPage() {
-  const navigate = useNavigate()
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    const message = `Name: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}\nTime: ${new Date().toLocaleString()}`
-    
-    const formPayload = new FormData()
-    formPayload.append('access_key', 'd5bb3ce5-742d-4dd2-a791-70a089d1e9e1')
-    formPayload.append('message', message)
-    formPayload.append('name', formData.name)
-    formPayload.append('email', formData.email)
-    formPayload.append('subject', 'New Contact Form Submission - Old School Tea')
-    
-    try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formPayload
-      })
-      const data = await response.json()
-      
-      if (data.success) {
-        alert(`Thank you ${formData.name}! Your message has been sent successfully. We'll get back to you soon.`)
-        setFormData({ name: "", email: "", message: "" })
-      } else {
-        alert('Something went wrong. Please try again later.')
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error)
-      alert('Network error. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  return (<div className="bg-black text-white min-h-screen"><div className="p-6"><button onClick={() => navigate("/")} className="border border-[#D4A373] px-5 py-2 text-[#D4A373] rounded-lg hover:bg-[#D4A373] hover:text-black transition">← BACK HOME</button></div><div className="px-6 md:px-20 py-12 max-w-4xl mx-auto"><div className="text-center mb-12"><h1 className="text-5xl font-bold mb-4"><span className="text-[#D4A373]">Contact</span> Us</h1><div className="w-20 h-1 bg-[#D4A373] mx-auto"></div></div><div className="grid md:grid-cols-2 gap-12"><div><h2 className="text-2xl font-bold mb-4">Get in Touch</h2><div className="space-y-4"><div className="flex items-center gap-3"><span className="text-2xl">📍</span><p className="text-gray-300">Kottapuram, Kodungallur, Kerala - 680667</p></div><div className="flex items-center gap-3"><span className="text-2xl">📞</span><p className="text-gray-300">+91 98765 43210</p></div><div className="flex items-center gap-3"><span className="text-2xl">✉️</span><p className="text-gray-300">oldschooletea@gmail.com</p></div><div className="flex items-center gap-3"><span className="text-2xl">🕒</span><p className="text-gray-300">Mon-Sun: 8:00 AM - 10:00 PM</p></div></div></div><form onSubmit={handleSubmit} className="space-y-4"><input type="text" name="name" placeholder="Your Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full p-3 bg-[#111] border border-gray-700 rounded-lg focus:outline-none focus:border-[#D4A373]" required /><input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full p-3 bg-[#111] border border-gray-700 rounded-lg focus:outline-none focus:border-[#D4A373]" required /><textarea rows="4" name="message" placeholder="Message" value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} className="w-full p-3 bg-[#111] border border-gray-700 rounded-lg focus:outline-none focus:border-[#D4A373]" required></textarea><button type="submit" disabled={isSubmitting} className="w-full py-3 bg-[#D4A373] text-black font-bold rounded-lg hover:bg-[#c49264] transition disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? 'SENDING...' : 'Send Message'}</button></form></div></div></div>)
-}
-
-/* ================= APP ================= */
+/* ================= MAIN APP ROUTER ================= */
 export default function App() {
   return (
     <BrowserRouter>
@@ -777,9 +1265,9 @@ export default function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/teas" element={<OurTeas />} />
-        <Route path="/locations" element={<Locations />} />
+        <Route path="/locations" element={<LocationsPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
