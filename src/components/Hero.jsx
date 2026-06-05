@@ -5,7 +5,7 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
   const containerRef = useRef(null);
   const videoRef = useRef(null);
   const scrollPercentRef = useRef(0);
-  
+
   const [scrollPercent, setScrollPercent] = useState(0);
   const [progressPercent, setProgressPercent] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -15,7 +15,7 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
   useEffect(() => {
     const videoUrl = "/videos/hero_optimized.mp4";
     const xhr = new XMLHttpRequest();
-    
+
     xhr.open("GET", videoUrl, true);
     xhr.responseType = "blob";
 
@@ -32,7 +32,7 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
         const localUrl = URL.createObjectURL(blob);
         setVideoSrc(localUrl);
         setProgressPercent(100);
-        
+
         // Add a slight delay for smooth visual transition
         setTimeout(() => {
           setIsLoaded(true);
@@ -196,7 +196,7 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,194,128,0.06)_0%,rgba(0,0,0,0.85)_80%)] z-10 pointer-events-none" />
 
         {/* Content Wrapper aligned to bottom-left */}
-        <div className="absolute bottom-12 md:bottom-24 left-6 md:left-20 max-w-4xl text-left z-20">
+        <div className="absolute bottom-12 md:bottom-24 left-6 md:left-20 max-w-4xl lg:max-w-6xl xl:max-w-7xl text-left z-20">
 
           {/* Phase 0: Main Hero Title (Invisible on load, reveals and triggers text animations on scroll start, remains till the last frame) */}
           {isLoaded && (
@@ -204,15 +204,15 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
               <p className="text-[#E6C280] text-[0.65rem] md:text-[0.8rem] font-medium tracking-[0.4em] uppercase animate-pulse">
                 🫖 Crafted with Tradition & Nostalgia
               </p>
-              <h1 className="text-[11vw] sm:text-[9vw] md:text-8xl lg:text-[7.5rem] font-bold text-white leading-[1.08] tracking-tight">
-                <span className="block overflow-hidden relative h-[1.18em] py-1">
-                  <span className="block reveal-text-1 whitespace-nowrap">
+              <h1 className="text-[8.5vw] sm:text-[8vw] md:text-7xl lg:text-8xl xl:text-[7.5rem] font-bold text-white leading-[1.08] tracking-tight">
+                <span className="block overflow-hidden relative h-[1.25em] py-1">
+                  <span className="block reveal-text-1 whitespace-nowrap pr-2">
                     OLD SCHOOL
                   </span>
                 </span>
-                <span className="block overflow-hidden relative h-[1.18em] py-1 mt-1">
-                  <span className="block text-gold-gradient font-normal italic font-serif reveal-text-2 whitespace-nowrap">
-                    TEA
+                <span className="block overflow-hidden relative h-[1.35em] py-1 mt-1">
+                  <span className="block text-gold-gradient font-normal italic font-serif reveal-text-2 whitespace-nowrap pr-4">
+                    TEA KOTTAPURAM
                   </span>
                 </span>
               </h1>
@@ -262,13 +262,12 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
 
       {/* Premium Loading Screen Overlay */}
       <div
-        className={`fixed inset-0 z-50 bg-[#061a16] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${
-          isLoaded ? "opacity-0 pointer-events-none scale-105" : "opacity-100 scale-100"
-        }`}
+        className={`fixed inset-0 z-50 bg-[#061a16] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${isLoaded ? "opacity-0 pointer-events-none scale-105" : "opacity-100 scale-100"
+          }`}
       >
         {/* Elegant background radial glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(230,194,128,0.08)_0%,rgba(0,0,0,0.95)_80%)] pointer-events-none" />
-        
+
         <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6 text-center space-y-8">
           {/* Stylized Logo/Icon */}
           <div className="relative flex items-center justify-center w-24 h-24 mb-2">
@@ -299,7 +298,7 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            
+
             {/* Progress Value */}
             <div className="flex justify-between items-center text-[0.65rem] tracking-widest uppercase text-gray-400 font-semibold px-1">
               <span className="animate-pulse">Steeping</span>
