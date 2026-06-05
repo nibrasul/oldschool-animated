@@ -3,66 +3,60 @@ import { ArrowRight, Compass } from "lucide-react";
 
 export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
   const containerRef = useRef(null);
+  const videoRef = useRef(null);
+  const scrollPercentRef = useRef(0);
+  
   const [scrollPercent, setScrollPercent] = useState(0);
-  const [activeFrame, setActiveFrame] = useState(1);
-
-  const totalFrames = 156;
-  const step = 3; // Downsample: load every 3rd frame (52 frames total) for optimal performance
-
-  // Generate exact frames list to load
-  const framesToLoad = [];
-  for (let i = 1; i <= totalFrames; i += step) {
-    framesToLoad.push(i);
-  }
-  if (!framesToLoad.includes(totalFrames)) {
-    framesToLoad.push(totalFrames);
-  }
-
-  const [loadedCount, setLoadedCount] = useState(0);
+  const [progressPercent, setProgressPercent] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [videoSrc, setVideoSrc] = useState(null);
 
-  const progressPercent = Math.min(
-    100,
-    Math.round((loadedCount / (framesToLoad.length || 1)) * 100)
-  );
-
-  const getFrameFilename = (index) => {
-    const padded = String(index).padStart(3, "0");
-    return `/images/herosection/ezgif-frame-${padded}.png`;
-  };
-
-  // 1. Preload image sequence on mount to warm browser cache and track progress
+  // 1. Preload video using XMLHttpRequest to track progress accurately
   useEffect(() => {
-    let loaded = 0;
-    const targetCount = framesToLoad.length;
+    const videoUrl = "/videos/hero_optimized.mp4";
+    const xhr = new XMLHttpRequest();
+    
+    xhr.open("GET", videoUrl, true);
+    xhr.responseType = "blob";
 
-    const handleImageLoad = () => {
-      loaded += 1;
-      setLoadedCount(loaded);
-      if (loaded >= targetCount) {
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setProgressPercent(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const blob = xhr.response;
+        const localUrl = URL.createObjectURL(blob);
+        setVideoSrc(localUrl);
+        setProgressPercent(100);
+        
         // Add a slight delay for smooth visual transition
         setTimeout(() => {
           setIsLoaded(true);
         }, 600);
+      } else {
+        // Fallback if XHR fails
+        setVideoSrc(videoUrl);
+        setProgressPercent(100);
+        setIsLoaded(true);
       }
     };
 
-    const handleImageError = () => {
-      loaded += 1;
-      setLoadedCount(loaded);
-      if (loaded >= targetCount) {
-        setTimeout(() => {
-          setIsLoaded(true);
-        }, 600);
-      }
+    xhr.onerror = () => {
+      // Fallback
+      setVideoSrc(videoUrl);
+      setProgressPercent(100);
+      setIsLoaded(true);
     };
 
-    framesToLoad.forEach((frame) => {
-      const img = new Image();
-      img.onload = handleImageLoad;
-      img.onerror = handleImageError;
-      img.src = getFrameFilename(frame);
-    });
+    xhr.send();
+
+    return () => {
+      xhr.abort();
+    };
   }, []);
 
   // 1b. Prevent scrolling while loading
@@ -77,10 +71,8 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
     };
   }, [isLoaded]);
 
-  // 2. Scroll and Resize listener
+  // 2. Scroll and Resize listener to update scroll progress
   useEffect(() => {
-    let frameId;
-
     const onScrollOrResize = () => {
       if (!containerRef.current) return;
 
@@ -94,31 +86,60 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
       }
 
       setScrollPercent(progress);
-
-      // Map progress (0.0 to 1.0) directly to active frame index (1 to 240)
-      const frameIndex = Math.floor(progress * (totalFrames / step)) * step + 1;
-      const frame = Math.max(1, Math.min(totalFrames, frameIndex));
-
-      setActiveFrame(frame);
+      scrollPercentRef.current = progress;
     };
 
-    const triggerUpdate = () => {
-      cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(onScrollOrResize);
-    };
-
-    window.addEventListener("scroll", triggerUpdate);
-    window.addEventListener("resize", triggerUpdate);
+    window.addEventListener("scroll", onScrollOrResize);
+    window.addEventListener("resize", onScrollOrResize);
 
     // Initial check
-    triggerUpdate();
+    onScrollOrResize();
 
     return () => {
-      window.removeEventListener("scroll", triggerUpdate);
-      window.removeEventListener("resize", triggerUpdate);
-      cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
     };
   }, []);
+
+  // 3. Buttery smooth animation loop for video scrubbing (Apple-style)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !isLoaded || !videoSrc) return;
+
+    let frameId;
+    let currentVideoTime = 0;
+
+    const updateVideoFrame = () => {
+      if (!video.duration || isNaN(video.duration)) {
+        frameId = requestAnimationFrame(updateVideoFrame);
+        return;
+      }
+
+      const duration = video.duration;
+      const targetTime = scrollPercentRef.current * duration;
+
+      // Linear interpolation (lerp) for smooth easing scrubbing
+      // 0.1 lerp factor gives a nice inertia feel
+      const lerpFactor = 0.1;
+      currentVideoTime += (targetTime - currentVideoTime) * lerpFactor;
+
+      // Clamp to duration boundaries
+      currentVideoTime = Math.max(0, Math.min(duration - 0.05, currentVideoTime));
+
+      // Avoid sub-millisecond updates to save CPU cycles
+      if (Math.abs(video.currentTime - currentVideoTime) > 0.005) {
+        video.currentTime = currentVideoTime;
+      }
+
+      frameId = requestAnimationFrame(updateVideoFrame);
+    };
+
+    frameId = requestAnimationFrame(updateVideoFrame);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [isLoaded, videoSrc]);
 
   // Utility to generate transition styles for fade-in/steady-state/fade-out ranges
   const getOverlayStyle = (activeRange, currentProgress, skipEntranceFade = false, skipExitFade = false) => {
@@ -158,12 +179,17 @@ export default function Hero({ onExploreClick, onMenuClick, onStoryScroll }) {
     <div ref={containerRef} className="relative h-[200vh] bg-[#061a16] z-20">
       {/* Sticky Screen Viewport */}
       <div className="sticky top-0 h-screen w-screen overflow-hidden flex items-center justify-start">
-        {/* HTML Image Tag for native browser caching & smooth rendering */}
-        <img
-          src={getFrameFilename(activeFrame)}
-          className="absolute inset-0 w-full h-full object-cover z-0 select-none pointer-events-none"
-          alt="Teapot Animation"
-        />
+        {/* Apple-style Scroll Scrubbed Video */}
+        {videoSrc && (
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            playsInline
+            muted
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover z-0 select-none pointer-events-none"
+          />
+        )}
 
         {/* Cinematic dark theme gradients overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/55 to-[#061a16]/90 z-10 pointer-events-none" />
