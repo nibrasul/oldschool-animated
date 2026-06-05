@@ -230,13 +230,6 @@ function OurTeas() {
       badge: "Classic Spiced",
     },
     {
-      name: "Kashmiri Kahwa",
-      desc: "Saffron strands & crushed almond flakes infused in green tea",
-      price: "₹99",
-      img: "https://images.unsplash.com/photo-1598866594230-a7c12756260f",
-      badge: "Royal Blend",
-    },
-    {
       name: "Matcha Latte",
       desc: "Pure organic Japanese stone-ground matcha with steamed milk",
       price: "₹129",
